@@ -18,7 +18,7 @@ gumtree <- read_excel("Gumtree_dogs.xlsx")
 
 # Cleaning Data
 
-### **Price**
+### Price
 
 ```{r}
 table(gumtree$price)
@@ -62,7 +62,7 @@ summary(gumtree$price)
 The prices seem reasonable. 
 
 
-### **Cross**
+### Cross
 
 
 ```{r}
@@ -75,7 +75,7 @@ gumtree$cross <- as.factor(gumtree$cross)
 ```
 The data seems reasonable. 
 
-### **Pet offered by**
+### Pet offered by
 
 ```{r}
 table(gumtree$`Pet Offered By:`)
@@ -88,7 +88,7 @@ summary(gumtree$`Pet Offered By:`)
 No apparent anomalies in the data.  
 
 
-### **Microchipped**
+### Microchipped
 
 ```{r}
 table(gumtree$micro)
@@ -101,7 +101,7 @@ summary(gumtree$micro)
 Data looks fine. 
 
 
-### **Vaccinated**
+### Vaccinated
 
 
 ```{r}
@@ -115,7 +115,7 @@ gumtree$vacc<-as.factor(gumtree$vacc)
 table(gumtree$vacc)
 ```
 
-### **Desexing Status**
+### Desexing Status
 
 
 ```{r}
@@ -133,7 +133,7 @@ table(gumtree$desex)
 
 
 
-### **Relinquished**
+### Relinquished
 
 
 ```{r}
@@ -145,7 +145,7 @@ table(gumtree$relinquished)
 ```
 Data looks fine. 
 
-### **Age**
+### Age
 
 
 ```{r, eval = FALSE}
@@ -168,29 +168,40 @@ ggplot(gumtree, aes(age)) +
 
 summary(gumtree$age)
 
-#How bizzare, at least on dog is less than 0 years old, and at least one is 545.8 years old
-#Lets filter out those in unreasonable age ranges
+This doesn't look right, check summary:
 
+```{r}
+summary(gumtree$age)
+```
+
+How bizzare, at least on dog is less than 0 years old, and at least one is 545.8 years old. Lets filter out those in unreasonable age ranges.
+
+```{r}
 gumtree %>%
   filter(age>25) %>%
   select(age)
+```
 
-#One dog is over 25 years of age, and it seems to be 545 years old.
-
+```{r}
 gumtree %>%
   filter(age<0) %>%
   select(age)
+```
 
-#several dogs are less than 0 years old.
+Since we have the go ahead from the researcher that these values are wrong, we will remove them from the dataset:
 
-#since we have the go ahead from the researcher that these values are wrong, we will remove them from the dataset:
+```{r}
 gumtree <- gumtree %>%
   filter(age>0, age<26)
+```
 
-#now we'll check the summary again
+Now we will check the summary again:
+```{r}
 summary(gumtree$age)
+```
 
-#These are much more reasonable values.
+These are much more reasonable values.
+
 
 
 
@@ -355,6 +366,28 @@ Most states have a smilarly small spread of data, except Victoria which has a wi
 
 **Outliers:**
 All states appear to have a number of outliers, with the least extreme prices in Tasmania.
+
+
+
+### Cross
+
+```{r, warning = F, error = F, fig.cap = "Figure 8: Boxplots of dog prices on Gumtree sorted by cross"}
+ggplot(gumtree, aes(x = cross, y = price)) + geom_boxplot()
+```
+
+#### Description
+
+**Shape:**
+The distribution of prices for dogs which are and are not been cross breeds appear to both be right-skeweed.
+
+**Location:**
+The centre of the data for dogs which are not been cross breeds is at a slightly higher price than those which are
+
+**Spread:**
+Prices of dogs which have been cross bred have a slightly wider spread of data than those which have not.
+
+**Outliers:**
+Both dogs which are cross breeds and those which are not have a large number of more extreme prices which can be considered to be outliers.
 
 ### Relinquished
 
