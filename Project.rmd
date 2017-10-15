@@ -1,0 +1,213 @@
+---
+title: "Project"
+author: "Shingyan Kwong"
+date: "October 15, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(tidyverse)
+library(readxl)
+gumtree <- read_excel("Gumtree_dogs.xlsx")
+```
+
+
+### ---- Cleaning of Data----
+
+**Price**
+
+```{r}
+table(gumtree$price)
+gumtree$price[gumtree$price == "NA"] <- NA
+table(gumtree$price)
+
+```
+Change all "NA" values to a value of NA understood by R. 
+
+```{r}
+summary(gumtree$price)
+```
+This looks strange.Lets see what class price is. 
+
+```{r}
+class(gumtree$price)
+
+```
+Price is a character. We need to convert this to a numeric variable. 
+
+```{r}
+gumtree$price <- as.numeric(gumtree$price)
+
+```
+
+Checking plot of price to pass stupidity test:
+  
+```{r}
+ggplot(gumtree, aes(price)) +
+  geom_histogram(col = "black", fill = "Light Blue")
+```
+
+
+The prices displayed in the histogram seem reasonable, as dogs can be very expensive, perhaps up to $10000, but the majority are in the more affordable range.
+
+To be sure, we check the summary statistics:
+```{r}
+summary(gumtree$price)
+```
+
+The prices seem reasonable. 
+
+
+**Cross**
+
+
+```{r}
+table(gumtree$cross)
+gumtree$cross[gumtree$cross == "NA"] <- NA
+table(gumtree$cross)
+class(gumtree$cross)
+gumtree$cross <- as.factor(gumtree$cross)
+
+```
+The data seems reasonable. 
+
+**Pet offered by**
+
+```{r}
+table(gumtree$`Pet Offered By:`)
+gumtree$`Pet Offered By:`[gumtree$`Pet Offered By:` == "NA"] <- NA
+table(gumtree$`Pet Offered By:`)
+class(gumtree$`Pet Offered By:`)
+gumtree$`Pet Offered By:` <- as.factor(gumtree$`Pet Offered By:`)
+summary(gumtree$`Pet Offered By:`)
+```
+No apparent anomalies in the data.  
+
+
+**Microchipped**
+
+```{r}
+table(gumtree$micro)
+gumtree$micro[gumtree$micro == "NA"] <- NA
+table(gumtree$micro)
+class(gumtree$micro)
+gumtree$micro <- as.factor(gumtree$micro)
+summary(gumtree$micro)
+```
+Data looks fine. 
+
+
+**Vaccinated**
+
+
+```{r}
+table(gumtree$vacc)
+gumtree$vacc[gumtree$vacc == "NA"] <- NA
+class(gumtree$vacc)
+```
+Let's change this to a categorical variable. 
+```{r}
+gumtree$vacc<-as.factor(gumtree$vacc)
+table(gumtree$vacc)
+```
+
+**Desexing Status**
+
+
+```{r}
+table(gumtree$desex)
+gumtree$desex[gumtree$desex == "NA"] <- NA
+class(gumtree$desex)
+```
+Let's change it to categorical. 
+
+```{r}
+gumtree$desex<-as.factor(gumtree$desex)
+table(gumtree$desex)
+```
+
+
+
+
+**Relinquished**
+
+
+```{r}
+table(gumtree$relinquished)
+gumtree$relinquished[gumtree$relinquished == "NA"] <- NA
+class(gumtree$relinquished)
+gumtree$relinquished <- as.factor(gumtree$relinquished)
+table(gumtree$relinquished)
+```
+Data looks fine. 
+
+**Age**
+
+
+```{r, eval = FALSE}
+table(gumtree$age)
+gumtree$age[gumtree$age == "NA"] <- NA
+class(gumtree$age)
+gumtree$relinquished <- as.factor(gumtree$relinquished)
+table(gumtree$age)
+```
+
+Checking plot of age to pass stupidity test:
+  
+  
+```{r}
+ggplot(gumtree, aes(age)) +
+  geom_histogram(col = "black", fill = "Light Blue")
+```
+
+#This doesn't look right, check summary:
+
+summary(gumtree$age)
+
+#How bizzare, at least on dog is less than 0 years old, and at least one is 545.8 years old
+#Lets filter out those in unreasonable age ranges
+
+gumtree %>%
+  filter(age>25) %>%
+  select(age)
+
+#One dog is over 25 years of age, and it seems to be 545 years old.
+
+gumtree %>%
+  filter(age<0) %>%
+  select(age)
+
+#several dogs are less than 0 years old.
+
+#since we have the go ahead from the researcher that these values are wrong, we will remove them from the dataset:
+gumtree <- gumtree %>%
+  filter(age>0, age<26)
+
+#now we'll check the summary again
+summary(gumtree$age)
+
+#These are much more reasonable values.
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
