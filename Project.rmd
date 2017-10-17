@@ -1,6 +1,6 @@
 ---
 title: "Project"
-author: "Shingyan Kwong"
+author: "Shingyan Kwong, Roman Stepchyn, Gerald Mathias, Scarlett Groom-Ransom, Oliver Lountain"
 date: "October 15, 2017"
 output: html_document
 ---
@@ -437,5 +437,61 @@ Since the data does not appear at all linear, we can produce the same plot but w
 
 ```{r, warning = F, error = F, fig.cap = "Figure 7: Scatterplot of the natural logarithm of dog prices of Gumtree against the age of the dog"}
 ggplot(gumtree, aes(x = age, y = log(price))) + geom_point()
+```
+
+# Model Fitting
+
+First, we create full and smallest versions of the model to indicate the scope, or rather, the most and least detailed versions of the model:
+```{r}
+
+full <-  price ~ (age + cross + `Pet Offered By:` + micro + vacc + desex + relinquished)^2
+smallest <- price ~ 1
+
+```
+
+We also define a version of the gumtree dataset without NA values in order to create our linear model:
+```{r}
+
+gumtreeN <- na.omit(gumtree)
+
+```
+
+Next, three different algorithms will be used to determine the model, and the results will be compared in order to decide upon the final model:
+
+First, the backwards selection method is used:
+
+```{r}
+
+bM <- lm(full, data = gumtreeN)
+bM <- step(bM, direction = "backward")
+
+```
+
+```{r, echo = F}
+tidy(bM)
+```
+
+Next, the forwards selection method is used:
+```{r}
+
+fM <- lm(smallest, data = gumtreeN)
+fM <- step(fM, scope = full, direction = "forward")
+
+```
+
+```{r, echo = F}
+tidy(fM)
+```
+
+Finally, the stepwaise selection method is used:
+```{r}
+
+sM <- lm(smallest, data = gumtreeN)
+sM <- step(sM, scope = full, direction = "both")
+
+```
+
+```{r, echo = F}
+tidy(sM)
 ```
 
