@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
 library(readxl)
 library(broom)
@@ -461,37 +461,33 @@ Next, three different algorithms will be used to determine the model, and the re
 First, the backwards selection method is used:
 
 ```{r}
-
+options(width = 150)
 bM <- lm(full, data = gumtreeN)
 bM <- step(bM, direction = "backward")
-
-```
-
-```{r, echo = F}
 tidy(bM)
 ```
 
 Next, the forwards selection method is used:
 ```{r}
-
+options(width = 150)
 fM <- lm(smallest, data = gumtreeN)
 fM <- step(fM, scope = full, direction = "forward")
-
-```
-
-```{r, echo = F}
 tidy(fM)
 ```
 
 Finally, the stepwaise selection method is used:
 ```{r}
-
+options(width = 150)
 sM <- lm(smallest, data = gumtreeN)
 sM <- step(sM, scope = full, direction = "both")
-
-```
-
-```{r, echo = F}
 tidy(sM)
 ```
 
+```{r}
+list(backwards = bM,
+     forwards = fM,
+     step = sM) %>%
+  map_df(broom::tidy, .id = "Model") %>%
+  select(Model, term, estimate) %>%
+  spread(Model, estimate)
+```
