@@ -444,7 +444,7 @@ ggplot(gumtree, aes(x = age, y = log(price))) + geom_point()
 First, we create full and smallest versions of the model to indicate the scope, or rather, the most and least detailed versions of the model:
 ```{r}
 
-full <-  price ~ (age + cross + `Pet Offered By:` + micro + vacc + desex + relinquished)^2
+full <-  price ~ (age + cross + micro + vacc + desex + relinquished)^2
 smallest <- price ~ 1
 
 ```
@@ -491,3 +491,12 @@ list(backwards = bM,
   select(Model, term, estimate) %>%
   spread(Model, estimate)
 ```
+
+# Prediction
+**This is not final as model selection is unfinished, but the code seems to work**
+```{r}
+predict(bM, data.frame(state = "SA", cross = "yes", age = 1, vacc = "vaccinated",
+                       relinquished = "yes", desex = "Desexed",
+                       micro = "microchipped"), interval = "predict")
+```
+
