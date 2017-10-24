@@ -475,13 +475,15 @@ fM <- step(fM, scope = full, direction = "forward")
 tidy(fM)
 ```
 
-Finally, the stepwaise selection method is used:
+Finally, the stepwise selection method is used:
 ```{r}
 options(width = 150)
 sM <- lm(smallest, data = gumtreeN)
 sM <- step(sM, scope = full, direction = "both")
 tidy(sM)
 ```
+
+Here are our 3 models. Notice that they are basically the same. Age:Cross and Cross:Age interactions terms are essentially the same. 
 
 ```{r}
 list(backwards = bM,
@@ -499,4 +501,6 @@ predict(bM, data.frame(state = "SA", cross = "yes", age = 1, vacc = "vaccinated"
                        relinquished = "yes", desex = "Desexed",
                        micro = "microchipped"), interval = "predict")
 ```
+
+
 
