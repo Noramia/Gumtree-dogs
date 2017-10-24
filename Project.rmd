@@ -483,7 +483,7 @@ sM <- step(sM, scope = full, direction = "both")
 tidy(sM)
 ```
 
-Here are our 3 models. Notice that they are basically the same. Age:Cross and Cross:Age interactions terms are essentially the same. 
+Here are our 3 models. Notice that they are basically the same model. Age:Cross and Cross:Age interactions terms are essentially the same.  
 
 ```{r}
 list(backwards = bM,
@@ -494,6 +494,24 @@ list(backwards = bM,
   spread(Model, estimate)
 ```
 
+Let's check our assumptions for this model. We will call it test_model. 
+
+```{r}
+test_model<-sM
+summary(test_model)
+tmp<-par(mfrow=c(2,2))
+plot(test_model)
+```
+
+Linearity: Check residual vs fitted plot.  If assumption is true we expect the red line to be flat around 0. We see that there is a bit of curvature but it's not too bad. Hence linearity is reasonable. 
+
+Normality: Check normal QQ plot. If assumption is true we expect the points between -2 and 2 to fall on the diagonal line. We see that most points fall on the diagonal although some points curve upward around 2. Normality is ok. 
+
+Equal variance: Check scale location plot. Looking for even spread as we go left to right.Points seem to fan outward as you go from left to right. Equal variance is not reasonable. 
+
+Independence: Plots do not help. Price of dogs should theoretically be independent. 
+
+
 # Prediction
 **This is not final as model selection is unfinished, but the code seems to work**
 ```{r}
@@ -502,5 +520,7 @@ predict(bM, data.frame(state = "SA", cross = "yes", age = 1, vacc = "vaccinated"
                        micro = "microchipped"), interval = "predict")
 ```
 
+We were asked to predict the price of a South Australian, cross-breed dog that is 1 year old. The dog is vaccinated, desexed and unfortunately has to be re-homed because the owner is moving interstate.
 
+Based on our model the price of the dog is $296. 
 
