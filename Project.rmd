@@ -10,14 +10,17 @@ knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
 library(readxl)
 library(broom)
-gumtree <- read_excel("Gumtree_dogs.xlsx")
+setwd("~/Second Year/Stats/R_Directory")
+gumtree <- read_rds("2.gumtree.rds")
 ```
 
 
 
 
 # Cleaning Data
+
 Firstly we need to clean by making sure all the values are able to be interpreted by R and thus able to be proerly analysed.
+
 ### Price
 The price variable contains string inputs which need to be assigned to a numeric value and "NA" variables need to be set to the NA value R can interpret so that it knows the data for that subject is unavailable.
 ```{r}
@@ -411,6 +414,75 @@ ggplot(gumtree, aes(x = age, y = log(price))) + geom_point()
 
 # Model Fitting
 
+First, we create bivariate regression models of price against each predictor variable, to decide whether they have enough of an effect on price individually, and if not, they will not be considered for the final model.
+
+Modelling against age:
+
+```{r}
+age.lm <- lm(price ~ age, data = gumtreeN)
+glance(age.lm)
+```
+
+The p-value is less than the significance level of 0.05, hence the age data should be considered for the final model.
+
+Modelling against cross:
+
+```{r}
+cross.lm <- lm(price ~ cross, data = gumtreeN)
+glance(cross.lm)
+```
+
+The p-value is less than the significance level of 0.05, hence the cross data should be considered for the final model.
+
+Modelling against microchipping status:
+
+```{r}
+micro.lm <- lm(price ~ micro, data = gumtreeN)
+glance(micro.lm)
+```
+
+The p-value is greater than the significance level of 0.05, hence the microscipping status data need not be considered for the final model.
+
+Modelling against vaccination:
+
+```{r}
+vacc.lm <- lm(price ~ vacc, data = gumtreeN)
+glance(vacc.lm)
+```
+
+The p-value is greater than the significance level of 0.05, hence the vaccination status data need not be considered for the final model.
+
+Modelling against desexing status:
+
+```{r}
+desex.lm <- lm(price ~ desex, data = gumtreeN)
+glance(desex.lm)
+```
+
+The p-value is less than the significance level of 0.05, hence the desexing status data should be considered for the final model.
+
+Modelling against whether or not the dog is relinquished:
+
+```{r}
+relinquished.lm <- lm(price ~ relinquished, data = gumtreeN)
+glance(relinquished.lm)
+```
+
+The p-value is less than the significance level of 0.05, hence the relinquished data should be considered for the final model.
+
+Modelling against the state in which state the dog is being sold:
+
+```{r}
+state.lm <- lm(price ~ state, data = gumtreeN)
+glance(state.lm)
+```
+
+The p-value is greater than the significance level of 0.05, hence the state data need not be considered for the final model.
+
+
+### Model Selection
+
+
 First, we create full and smallest versions of the model to indicate the scope, or rather, the most and least detailed versions of the model:
 ```{r}
 
@@ -423,6 +495,7 @@ We also define a version of the gumtree dataset without NA values in order to cr
 ```{r}
 
 gumtreeN <- na.omit(gumtree)
+gumtreeN <- filter(gumtreeN, price >10)
 
 ```
 
@@ -482,6 +555,76 @@ Equal variance: Check scale location plot. Looking for even spread as we go left
 Independence: Plots do not help. Price of dogs should theoretically be independent. 
 
 Notice in the residual vs fitted plot, the points tend to be clustered to the left. This suggests that data is right skewed. Perhaps we can get a better model with a log transform of price. We apply the 3 algorithms we used previously. Since log(0) is infinite, we will do a +1 offset. This should be ok as the offset is small. 
+
+
+
+### Logarithm of Price
+
+First, we create bivariate regression models of log(price) against each predictor variable, to decide whether they have enough of an effect on log(price) individually, and if not, they will not be considered for the final model.
+
+Modelling against age:
+  
+```{r}
+log_age.lm <- lm(log(price) ~ age, data = gumtreeN)
+glance(log_age.lm)
+```
+The p-value is less than the significance level of 0.05, hence the age data should be considered for the final logarithm model.
+
+Modelling against cross:
+  
+```{r}
+log_cross.lm <- lm(log(price) ~ cross, data = gumtreeN)
+glance(log_cross.lm)
+```
+The p-value is less than the significance level of 0.05, hence the cross data should be considered for the final logarithm model.
+
+Modelling against microchipping status:
+  
+```{r}
+log_micro.lm <- lm(log(price) ~ micro, data = gumtreeN)
+glance(log_micro.lm)
+```
+
+The p-value is greater than the significance level of 0.05, hence the microshipping status data need not be considered for the final logarithm model.
+
+Modelling against vaccination:
+  
+```{r}
+log_vacc.lm <- lm(log(price) ~ vacc, data = gumtreeN)
+glance(log_vacc.lm)
+```
+
+The p-value is greater than the significance level of 0.05, hence the vaccination status data need not be considered for the final logarithm model.
+
+Modelling against desexing status:
+  
+```{r}
+log_desex.lm <- lm(log(price) ~ desex, data = gumtreeN)
+glance(log_desex.lm)
+```
+
+The p-value is less than the significance level of 0.05, hence the desexing status data should be considered for the final logarithm model.
+
+Modelling against whether or not the dog is relinquished:
+  
+```{r}
+log_relinquished.lm <- lm(log(price) ~ relinquished, data = gumtreeN)
+glance(log_relinquished.lm)
+```
+
+The p-value is greater than the significance level of 0.05, hence the relinquished data need not be considered for the final logarithm model.
+
+Modelling against the state in which state the dog is being sold:
+  
+```{r}
+log_state.lm <- lm(log(price) ~ state, data = gumtreeN)
+glance(log_state.lm)
+```
+
+The p-value is greater than the significance level of 0.05, hence the state data need not be considered for the final logarithm model.
+
+
+
 
 Backward Model:
 
