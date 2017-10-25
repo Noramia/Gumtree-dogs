@@ -17,30 +17,30 @@ gumtree <- read_excel("Gumtree_dogs.xlsx")
 
 
 # Cleaning Data
-
+Firstly we need to clean by making sure all the values are able to be interpreted by R and thus able to be proerly analysed.
 ### Price
-
+The price variable contains string inputs which need to be assigned to a numeric value and "NA" variables need to be set to the NA value R can interpret so that it knows the data for that subject is unavailable.
 ```{r}
-table(gumtree$price)
-gumtree$price[gumtree$price == "NA"] <- NA
-table(gumtree$price)
+table(gumtree$price)                        #checking the variable of price in the dataset
+gumtree$price[gumtree$price == "NA"] <- NA  #seting all "NA" values to the NA understood by R
+table(gumtree$price)                        #Check that worked 
 
 ```
-Change all "NA" values to a value of NA understood by R. 
+Now R understands which subjects have data, and the ones that don't have been set to NA. 
 
 ```{r}
-summary(gumtree$price)
+summary(gumtree$price)  #View the summary statistics so far
 ```
-This looks strange.Lets see what class price is. 
+We see it's not concidering the price variable as quantitative data yet.
 
 ```{r}
-class(gumtree$price)
+class(gumtree$price)   #checking the class of variable R conciders price at this point
 
 ```
-Price is a character. We need to convert this to a numeric variable. 
+R conciders Price to be of class 'character'. We need to chance class to 'numeric' since Price is a quantitative variable so that R can do maths with these values. 
 
 ```{r}
-gumtree$price <- as.numeric(gumtree$price)
+gumtree$price <- as.numeric(gumtree$price)   #reset the class of Price to numeric so R knows these values are numbers
 
 ```
 
@@ -48,7 +48,7 @@ Checking plot of price to pass stupidity test:
   
 ```{r}
 ggplot(gumtree, aes(price)) +
-  geom_histogram(col = "black", fill = "Light Blue")
+  geom_histogram(col = "black", fill = "Light Blue")  #plot of the price variable
 ```
 
 
@@ -56,24 +56,24 @@ The prices displayed in the histogram seem reasonable, as dogs can be very expen
 
 To be sure, we check the summary statistics:
 ```{r}
-summary(gumtree$price)
+summary(gumtree$price)  #check the summary statics of Price
 ```
 
-The prices seem reasonable. 
+The prices seem reasonable, so we concidert the price variablbe clean. 
 
 
 ### Cross
-
+Cross is a catagorical variable so we need to make sure R knows to treat is as a catagorical variable and to reset the string values of "NA" to the R value NA so R knows to not include that data in analysis.
 
 ```{r}
-table(gumtree$cross)
-gumtree$cross[gumtree$cross == "NA"] <- NA
-table(gumtree$cross)
-class(gumtree$cross)
-gumtree$cross <- as.factor(gumtree$cross)
+table(gumtree$cross)                        #Check the stauts of the values currently in R
+gumtree$cross[gumtree$cross == "NA"] <- NA  #Set all string "NA" values to the R value NA
+table(gumtree$cross)                        #Make sure that went through
+class(gumtree$cross)                        #Check the class of the variables
+gumtree$cross <- as.factor(gumtree$cross)   #set the class of the variable to factor
 
 ```
-The data seems reasonable. 
+Now the data seems reasonable. 
 
 ### Pet offered by
 
