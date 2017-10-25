@@ -1,8 +1,13 @@
 ---
-title: "Project"
-author: "Shingyan Kwong, Roman Stepchyn, Gerald Mathias, Scarlett Groom-Ransom, Oliver Lountain"
+title: 'A look into gumtree dogs analysis '
+author: Shingyan Kwong, Roman Stepchyn, Gerald Mathias, Scarlett Groom-Ransom, Oliver
+  Lountain
 date: "October 15, 2017"
-output: html_document
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+fontsize: 12pt
 ---
 
 ```{r setup, include=FALSE}
@@ -10,7 +15,8 @@ knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
 library(readxl)
 library(broom)
-setwd("~/Second Year/Stats/R_Directory")
+#remove the hex below once 
+#setwd("~/Second Year/Stats/R_Directory")
 gumtree <- read_rds("2.gumtree.rds")
 ```
 
@@ -23,90 +29,101 @@ gumtree <- read_rds("2.gumtree.rds")
 
 # Cleaning Data
 
-Firstly we need to clean by making sure all the values are able to be interpreted by R and thus able to be proerly analysed.
+First we will clean the values and variables by making sure all the values can  be interpreted by R and able to be properly analysed.
 
 ### Price
-The price variable contains string inputs which need to be assigned to a numeric value and "NA" variables need to be set to the NA value R can interpret so that it knows the data for that subject is unavailable.
-```{r}
-table(gumtree$price)                        #checking the variable of price in the dataset
-gumtree$price[gumtree$price == "NA"] <- NA  #seting all "NA" values to the NA understood by R
-table(gumtree$price)                        #Check that worked 
-
-```
-Now R understands which subjects have data, and the ones that don't have been set to NA. 
+The price variable contains string inputs which need to be assigned to a numeric value and "NA" variables need to be set to the NA if there are any so that R can interpret so that it knows the data for that subject is unavailable.
 
 ```{r}
-summary(gumtree$price)  #View the summary statistics so far
+table(gumtree$price)                         
+# check if there are any NA
+gumtree$price[gumtree$price == "NA"] <- NA  
+# set all "NA" values to the NA anyway
 ```
-We see it's not considering the price variable as quantitative data yet.
+  
+Now R understands which subjects have data, and the ones that don't have been set to NA. From here, we can check if it pass the stupidity test, i.e. no dogs with negative value and unreasonable amount. The prices seem reasonable as there are dogs with minimumu price of 0 and maximum price of 8000.  
 
 ```{r}
-class(gumtree$price)   #checking the class of variable R considers price at this point
-
-```
-R considers Price to be of class 'character'. We need to chance class to 'numeric' since Price is a quantitative variable so that R can do maths with these values. 
+summary(gumtree$price)  
+#View the summary statistics so far
+```  
+Next we check if price is a 'numeric' class.
 
 ```{r}
-gumtree$price <- as.numeric(gumtree$price)   #reset the class of Price to numeric so R knows these values are numbers
+class(gumtree$price)   
+#checking the class of variable price in gumtree data set
 
 ```
-
-Checking plot of price to pass stupidity test:
+R considers Price to be of class 'numeric'. We do not need to chance class since Price is a quantitative variable. 
   
 ```{r}
-ggplot(gumtree, aes(price)) +
-  geom_histogram(col = "black", fill = "Light Blue")  #plot of the price variable
+gumtree$price <- as.numeric(gumtree$price)   #reset the class of Price to numeric so R knows these values are numbers
+class(gumtree$price)
+
 ```
 
+ 
 
-The prices displayed in the histogram seem reasonable, as dogs can be very expensive, perhaps up to $10000, but the majority are in the more affordable range.
-
-To be sure, we check the summary statistics:
 ```{r}
-summary(gumtree$price)  #check the summary statics of Price
+ggplot(gumtree, aes(price)) +
+  geom_histogram(col = "black", fill = "Light Blue")  
+#plot of the price variable
 ```
 
-The prices seem reasonable, so we consider the price variablbe to be clean. 
-
+  The random variable price appears to be unimodal and right skewed.
 
 ### Cross
-Cross is a catagorical variable so we need to make sure R knows to treat is as a catagorical variable and to reset the string values of "NA" to the R value NA so R knows to not include that data in analysis.
+Cross is a catagorical variable. We need to make sure R treat it as a catagorical variable and to reset the string values of "NA" to the R value NA if there are any. This make sure that R does not include that data in analysis.
 
 ```{r}
-table(gumtree$cross)                        #Check the stauts of the values currently in R
-gumtree$cross[gumtree$cross == "NA"] <- NA  #Set all string "NA" values to the R value NA
-table(gumtree$cross)                        #Make sure that went through
-class(gumtree$cross)                        #Check the class of the variables
-gumtree$cross <- as.factor(gumtree$cross)   #set the class of the variable to factor
+table(gumtree$cross)                        
+#Check the stauts of the values currently in R
+gumtree$cross[gumtree$cross == "NA"] <- NA  
+#Set all string "NA" values to the R value NA again
+```
+Next we check if cross is a factor. 
+```{r}
+
+class(gumtree$cross)                        
+#Check the class of the variables
+gumtree$cross <- as.factor(gumtree$cross)   
+#set the class of the variable to factor again
 
 ```
-Now the data seems reasonable, we consider it cleaned. 
-
+Since cross is a factor, we do not need to change the class. Now the data seems reasonable and it seem to pass the stupidity test, there are only yes and no factors and nothign else. This data is cleaned.  
+  
 ### Pet offered by
-'Pet Offered By:' is also a catagorical variable so same as above we need to change the class to factor and change the "NA" values to the R recognisable NA values.
+'Pet Offered By:' is also a catagorical variable so same as above we need to change the class to factor and change the "NA" values to the R recognisable NA values if there are any.
 ```{r}
-table(gumtree$`Pet Offered By:`)                                      #Check the currnet status of the 'Pet Offered By:' values in R
-gumtree$`Pet Offered By:`[gumtree$`Pet Offered By:` == "NA"] <- NA    #Set al the string "NA" values to NA in R
-table(gumtree$`Pet Offered By:`)                                      #Check that the changed values are now NA
-class(gumtree$`Pet Offered By:`)                                      #See what class"Pet Offered By:' is
-gumtree$`Pet Offered By:` <- as.factor(gumtree$`Pet Offered By:`)     #set the class to factor 
-summary(gumtree$`Pet Offered By:`)                                    #check the summary stats for good measure
+table(gumtree$`Pet Offered By:`)
+#Check the currnet status of the 'Pet Offered By:' values in R
+gumtree$`Pet Offered By:`[gumtree$`Pet Offered By:` == "NA"] <- NA    
+#Set al the string "NA" values to NA in R
 ```
-We see no apparent anomalies in the 'Pet Offered By:' data, so we consider it cleaned.  
+Next we check if 'Pet Offered By' is a factor. 
+```{r}
+class(gumtree$`Pet Offered By:`)
+#See what class"Pet Offered By:' is
+gumtree$`Pet Offered By:` <- as.factor(gumtree$`Pet Offered By:`)
+#set the class to factor 
+```
 
+We see no apparent anomalies in the 'Pet Offered By:' data, so we consider it cleaned. The data seems reasonable and it seem to pass the stupidity test, there are only 2 factors.
 
 ### Microchipped
 The Microchipped variable is also a catagorical variable so same as above we need to change the class to factor and change the "NA" values to the R recognisable NA values.
 ```{r}
 table(gumtree$micro)                          #Check the current microchipped data 
-gumtree$micro[gumtree$micro == "NA"] <- NA    #set all the string "NA" values to NA in R
-table(gumtree$micro)                          #Make sure those values have changed
-class(gumtree$micro)                          #check what the class of michrochipped is
-gumtree$micro <- as.factor(gumtree$micro)     #change the class of microchipped to factor
-summary(gumtree$micro)                        #Observe our recent changes
+gumtree$micro[gumtree$micro == "NA"] <- NA
+#set all the string "NA" values to NA in R
 ```
-The Microchipped data looks reasonable so we consider it cleaned. 
-
+Next we check if micro is a factor, if it is, we do not need to make any changes. 
+```{r}
+class(gumtree$micro)                          #check what the class of michrochipped is
+gumtree$micro <- as.factor(gumtree$micro)     #change the class of microchipped to factor***
+#summary(gumtree$micro)                        #Observe our recent changes***
+```
+The Microchipped data looks reasonable so we consider it cleaned. The data seems reasonable and it seem to pass the stupidity test, there are only either microchipped or not microchipped. 
 
 ### Vaccinated
 The vaccinated variable is also a catagorical variable so same as above we need to change the class to factor and change the "NA" values to the R recognisable NA values.
@@ -114,11 +131,14 @@ The vaccinated variable is also a catagorical variable so same as above we need 
 ```{r}
 table(gumtree$vacc)                         #check the current vaccinated data
 gumtree$vacc[gumtree$vacc == "NA"] <- NA    #change the string "NA" values to NA in R
-class(gumtree$vacc)                         #check the class of vaccinated
-gumtree$vacc<-as.factor(gumtree$vacc)       #change the class to factor
-table(gumtree$vacc)                         #Observe our recent changes
 ```
-The vaccinated data looks ready to work with so we consider it cleaned.
+Next we check if vaccinated is a factor, if it is, we do not need to make any changes.
+```{r}
+class(gumtree$vacc)                         #check the class of vaccinated
+gumtree$vacc<-as.factor(gumtree$vacc)       #change the class to factor***
+#table(gumtree$vacc)                         #Observe our recent changes***
+```
+The vaccinated data looks ready to work with so we consider it cleaned.The data seems reasonable and it seem to pass the stupidity test, there are only either vaccincated or not vaccinated. 
 
 ### Desexing Status
 The Desex variable is also a catagorical variable so same as above we need to change the class to factor and change the "NA" values to the R recognisable NA values.
@@ -126,11 +146,14 @@ The Desex variable is also a catagorical variable so same as above we need to ch
 ```{r}
 table(gumtree$desex)                          #check the current desex data 
 gumtree$desex[gumtree$desex == "NA"] <- NA    #change the string "NA" to the NA in R
+```
+Next we check if desexing status is a factor, if it is, we do not need to make any changes.
+```{r}
 class(gumtree$desex)                          #Check the class of desex 
 gumtree$desex<-as.factor(gumtree$desex)       #change the class to factor
-table(gumtree$desex)                          #Observe our recent changes
+#table(gumtree$desex)                          #Observe our recent changes***
 ```
-The Desex data is now clean and ready to gleam!
+The Desex data is now clean. The data seems reasonable and it seem to pass the stupidity test, there are only either desex or entire.
 
 ### Relinquished
 
@@ -138,11 +161,15 @@ The Relinquished variable is also a catagorical variable so same as above we nee
 ```{r}
 table(gumtree$relinquished)                                 #check the current relinquished data
 gumtree$relinquished[gumtree$relinquished == "NA"] <- NA    #change the string value of "NA" to NA R value
+```
+Next we check if relinquished status is a factor, if it is, we do not need to make any changes.
+```{r}
 class(gumtree$relinquished)                                 #check the class of relinquished
 gumtree$relinquished <- as.factor(gumtree$relinquished)     #change the class of relinquished to factor
 table(gumtree$relinquished)                                 #observe our recent changes
 ```
-We see the relinquished data is like a whistle, clean, ready for analysis!
+We see the relinquished data is clean and the data seems reasonable and it seem to pass the stupidity test, there are only either yes or no.
+
 
 ### Age
 The Age variable is a quantitative variable so we will need to change the class to numeric. The Age data also contains string "NA" values which will need to be changed to the NA value R recognises.
@@ -161,11 +188,12 @@ We will now do a stupidity test for the Age variable by plotting the values in a
 ggplot(gumtree, aes(age)) +
   geom_histogram(col = "black", fill = "Light Blue")    #plot a histogram of dog ages
 ```
-The histogram doesn't look how it's supposed to so we check the sumary of the age data
-```{r{
+  The histogram doesn't look how it's supposed to so we check the sumary of the age data
+***we can just use the sumamry instead of the histogram.
+```{r}
 summary(gumtree$age)    # check the summary statistics for the age data
 ```
-As seen in the summary statistics, the min age for dogs is a negative number and the maximum age for dogs is 545.8 years old. This obviously does not pass the stupidity test, dogs can live for a while but not that long! We need to filter out the unreasonable ages of dogs so that they do not skew the data.
+As seen in the summary statistics, the min age for dogs is a negative number and the maximum age for dogs is 545.8 years old. This obviously does not pass the stupidity test, dogs can live for a while but not that long! We need to filter out the unreasonable ages of dogs so that they do not skew the data. We will remove any dogs age below 0 and above 25 years.
 
 Since we have the go ahead from the researcher that these values are wrong, we will remove them from the dataset:
 
@@ -185,23 +213,23 @@ Now we have completed all the cleaning of the data we can now start analysing it
 # Variable Description
 
 ### Price
-The variable “Price” is a quantitative random variable. It is continuous on the positive real number line.
+The variable Price is a quantitative random variable. It is continuous on the positive real number line.
 
 #### Univariate plot
-As “Price” is a quantitative continuous random variable, it can be visualised with a histogram (Fig. 1).
+As Price is a quantitative continuous random variable, it can be visualised with a histogram (Fig. 1).
 ```{r, warning = F, error = F, fig.cap = "Figure 1: Histogram of price of advertised dogs on gumtree in dollars."}
 ggplot(gumtree,aes(x = price)) +
   geom_histogram(ccol = "black", fill = "Light Blue") +
   labs(x = "Price of dog in dollars.")
 ```
 
-The random variable “Price” appears to be unimodal and right skewed. The mean price of a dog on gumtree seems to be around the $250 to $500 range.
+The random variable  Price appears to be unimodal and right skewed. The mean price of a dog on gumtree seems to be around the $250 to $500 range.
 
 ### Cross
-The variable “cross” is a categorical variable.
+The variable  cross is a categorical variable.
 
 #### Univariate plot
-As “cross” is a categorical variable, it can be visualised with a bar-chart (Fig. 2).
+As  cross is a categorical variable, it can be visualised with a bar-chart.
 ```{r, warning = F, error = F, fig.cap = "Figure 2: Bar Chart of crossbreed status of advertised dogs on gumtree."}
 ggplot(gumtree,aes(x = cross, fill = cross)) +
  geom_bar()+
@@ -211,10 +239,10 @@ ggplot(gumtree,aes(x = cross, fill = cross)) +
 It appears more purebred dogs are for sale on gumtree; approximately twice as many as there are crossbred dogs.
 
 ### Pet offered by
-The variable “Pet Offered By:” is a categorical variable.
+The variable 'Pet Offered By:' is a categorical variable.
 
 #### Univariate plot
-As “Pet Offered By” is a categorical variable, it can be visualised with a bar-chart (Fig. 3).
+As  Pet Offered By is a categorical variable, it can be visualised with a bar-chart (Fig 3).
 ```{r, warning = F, error = F, fig.cap = "Figure 3: Bar-Chart of who is the pet offered by on gumtree."}
 ggplot(gumtree, aes(x = `Pet Offered By:`, fill = `Pet Offered By:`)) +
   geom_bar()+
@@ -224,10 +252,10 @@ ggplot(gumtree, aes(x = `Pet Offered By:`, fill = `Pet Offered By:`)) +
 The majority of dogs for sale on gumtree are offered by their owners.
 
 ### Microchip
-The variable “Microchip” is a categorical variable.
+The variable  Microchip is a categorical variable.
 
 #### Univariate plot
-As “Microchip” is a categorical variable, it can be visualised with a bar-chart (Fig. 4).
+As  Microchip is a categorical variable, it can be visualised with a bar-chart (Fig. 4).
 ```{r, warning = F, error = F, fig.cap = "Figure 4: Bar-Chart of how many dogs are Microchipped on gumtree."}
 ggplot(gumtree, aes(x = micro, fill = micro)) +
    geom_bar()+
@@ -237,10 +265,10 @@ ggplot(gumtree, aes(x = micro, fill = micro)) +
 The majority of dog sale ads on gumtree do not specify whether the dog has been microchipped or not. But when information is provided, more than 90% of dogs for sale have been microchipped.
 
 ### Vaccination
-The variable “Vaccination” is a categorical variable.
+The variable  Vaccination is a categorical variable.
 
 #### Univariate plot
-As “Vaccination” is a categorical variable, it can be visualised with a bar-chart (Fig. 5).
+As  Vaccination is a categorical variable, it can be visualised with a bar-chart (Fig. 5).
 ```{r, warning = F, error = F, fig.cap = "Figure 5: Bar-chart of how many dogs have been vaccinated on gumtree."}
 ggplot(gumtree, aes(x = vacc, fill = vacc)) +
    geom_bar()+
@@ -250,10 +278,10 @@ ggplot(gumtree, aes(x = vacc, fill = vacc)) +
 The majority of dog sale ads on gumtree do not specify whether the dog has been vaccinated or not. But when information is provided, more than 90% of dogs have been vaccinated.
 
 ### Desexing status
-The variable “Desexing Status” is a categorical variable.
+The variable  Desexing Status is a categorical variable.
 
 #### Univariate plot
-As “Desexing Status” is a categorical variable, it can be visualised with a bar-chart (Fig. 6).
+As  Desexing Status is a categorical variable, it can be visualised with a bar-chart (Fig. 6).
 ```{r, warning = F, error = F, fig.cap = "Figure 6: Bar-Chart of how many dogs have been desexed on gumtree."}
 ggplot(gumtree, aes(x = desex, fill = desex)) +
    geom_bar()+
@@ -263,10 +291,10 @@ ggplot(gumtree, aes(x = desex, fill = desex)) +
 The majority of dog sale ads on gumtree do not specify whether the dog has been desexed. But when the information is provided, the majority of dogs have been desexed.
 
 ### Relinquished status
-The variable “Relinquished Status” is a categorical variable.
+The variable  Relinquished Status is a categorical variable.
 
 #### Univariate plot
-As “Relinquished Status” is a categorical variable, it can be visualised with a bar-chart (Fig. 7).
+As  Relinquished Status is a categorical variable, it can be visualised with a bar-chart (Fig. 7).
 ```{r, warning = F, error = F, fig.cap = "Figure 7: Bar-Chart of how many dogs have been relinquished on gumtree."}
 ggplot(gumtree, aes(x = relinquished, fill = relinquished)) +
    geom_bar()+
@@ -294,7 +322,7 @@ ggplot(gumtree, aes(x = `Pet Offered By:`, y = log(price))) + geom_boxplot()
 #### Description
 
 **Shape:**
-Both seem to be symmetrical aside from outliers
+Both seem to be symmetrical aside from outliers, breeeder have a higher mean price compared to owner.
 
 **Location:**
 The data for dogs sold by breeders is centred at a higher price than those being sold by owners.
@@ -329,7 +357,7 @@ ggplot(gumtree %>% filter(!is.na(gumtree$micro)), aes(x = micro, y = log(price))
 #### Description
 
 **Shape:**
-Dogs which have been microchipped seem to have generally symmetrical data. Those which are not microchipped may be slightly right-skewed.
+Dogs which have been microchipped seem to have generally symmetrical data. Those which are not microchipped may be slightly right-skewed. Dogs that have been microchipped have a higher mean price compared to their counterpart.
 
 **Location:**
 The data for dogs which have been microchipped is centred at a slightly higher price than those which have not been microchipped, but there is some overlap.
@@ -361,7 +389,7 @@ ggplot(gumtree %>% filter(!is.na(gumtree$vacc)), aes(x = vacc, y = log(price))) 
 #### Description
 
 **Shape:**
-Both dogs which have and which have not been vaccinated appear to have symmetrical data, however, since those which have not, have such a narrow spread, (possibly due to a small sample size) it is difficult to be certain.
+Both dogs which have and which have not been vaccinated appear to have symmetrical data, however, since those which have not, have such a narrow spread, (possibly due to a small sample size) it is difficult to be certain. Vaccinated dogs have a higher mean price.
 
 **Location:**
 The centre of the data for dogs which have not been vaccinated is at a lower price than those which have.
@@ -373,7 +401,7 @@ Those which have been vaccanited have a reasonably small spread apart from outli
 The non-vaccinated dogs appear to have one outlier either side of the centre, and the dogs which have been vaccinated have a larger number of oultiers at prices much higher than the centre of the data.
 
 ### Desexing Status
-
+  
 ```{r, warning = F, error = F, fig.cap = "Figure 4: Boxplots of the dog prices on Gumtree sorted by whether dogs have been desexed"}
 ggplot(gumtree, aes(x = desex, y = price)) + geom_boxplot()
 ```
@@ -393,7 +421,7 @@ ggplot(gumtree %>% filter(!is.na(gumtree$desex)), aes(x = desex, y = log(price))
 #### Description
 
 **Shape:**
-The prices of dogs which have been desexed appears to be symmetrically distributed, while the prices of those which are entire appears to be somewhat right-skewed.
+The prices of dogs which have been desexed appears to be symmetrically distributed, while the prices of those which are entire appears to be somewhat right-skewed. Mean price of dogs is slightly higher for dogs that have been entired.
 
 **Location:**
 The data for the dogs which have not been desexed is centred a slightly higher price than those which have been desexed, but the difference is only approximately $100.
@@ -435,10 +463,10 @@ The centre of the data for dogs prices is very similar amongst all states.
 Most states have a smilarly small spread of data, except Victoria which has a wider spread, and ACT and WA which both have narrower spreads.
 
 **Outliers:**
-All states appear to have a number of outliers, with the least extreme prices in Tasmania.
+All states appear to have a number of outliers, with the least extreme prices in Tasmania. Most outliers seem to be skewed towards a higher price.
 
-
-
+  
+  
 ### Cross
 
 ```{r, warning = F, error = F, fig.cap = "Figure 8: Boxplots of dog prices on Gumtree sorted by cross"}
@@ -448,7 +476,7 @@ ggplot(gumtree, aes(x = cross, y = price)) + geom_boxplot()
 #### Description
 
 **Shape:**
-The distribution of prices for dogs which are and are not been cross breeds appear to both be right-skeweed.
+The distribution of prices for dogs which are and are not been cross breeds appear to both be right-skeweed. Mean price seems to be slightly higher for breeds that are not crossed.
 
 **Location:**
 The centre of the data for dogs which are not been cross breeds is at a slightly higher price than those which are
@@ -474,7 +502,7 @@ ggplot(gumtree %>% filter(!is.na(gumtree$state)), aes(x = relinquished, y = log(
 #### Description
 
 **Shape:**
-The distribution of prices for dogs which have and have not been relinquished appear to both be approximately symmetrical.
+The distribution of prices for dogs which have and have not been relinquished appear to both be approximately symmetrical. Mean price is slightly higher for dogs which have not been relinquished.
 
 **Location:**
 The centre of the data for dogs which have not been relinquished is at a slightly higher price than those which have.
@@ -508,6 +536,7 @@ Since the data does not appear at all linear, we can produce the same plot but w
 ```{r, warning = F, error = F, fig.cap = "Figure 7: Scatterplot of the natural logarithm of dog prices of Gumtree against the age of the dog"}
 ggplot(gumtree, aes(x = age, y = log(price))) + geom_point()
 ```
+
 
 # Model Fitting
 
