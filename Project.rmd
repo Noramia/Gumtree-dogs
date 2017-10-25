@@ -206,10 +206,10 @@ ggplot(gumtree,aes(x = cross, fill = cross)) +
 
 It appears more purebred dogs are for sale on gumtree; approximately twice as many as there are crossbred dogs.
 
-###Pet offered by
+### Pet offered by
 The variable “Pet Offered By:” is a categorical variable.
 
-####Univariate plot
+#### Univariate plot
 As “Pet Offered By” is a categorical variable, it can be visualised with a bar-chart (Fig. 3).
 ```{r, warning = F, error = F, fig.cap = "Figure 3: Bar-Chart of who is the pet offered by on gumtree."}
 ggplot(gumtree, aes(x = `Pet Offered By:`, fill = `Pet Offered By:`)) +
@@ -219,10 +219,10 @@ ggplot(gumtree, aes(x = `Pet Offered By:`, fill = `Pet Offered By:`)) +
 
 The majority of dogs for sale on gumtree are offered by their owners.
 
-###Microchip
+### Microchip
 The variable “Microchip” is a categorical variable.
 
-####Univariate plot
+#### Univariate plot
 As “Microchip” is a categorical variable, it can be visualised with a bar-chart (Fig. 4).
 ```{r, warning = F, error = F, fig.cap = "Figure 4: Bar-Chart of how many dogs are Microchipped on gumtree."}
 ggplot(gumtree, aes(x = micro, fill = micro)) +
@@ -232,10 +232,10 @@ ggplot(gumtree, aes(x = micro, fill = micro)) +
 
 The majority of dog sale ads on gumtree do not specify whether the dog has been microchipped or not. But when information is provided, more than 90% of dogs for sale have been microchipped.
 
-###Vaccination
+### Vaccination
 The variable “Vaccination” is a categorical variable.
 
-####Univariate plot
+#### Univariate plot
 As “Vaccination” is a categorical variable, it can be visualised with a bar-chart (Fig. 5).
 ```{r, warning = F, error = F, fig.cap = "Figure 5: Bar-chart of how many dogs have been vaccinated on gumtree."}
 ggplot(gumtree, aes(x = vacc, fill = vacc)) +
@@ -245,10 +245,10 @@ ggplot(gumtree, aes(x = vacc, fill = vacc)) +
 
 The majority of dog sale ads on gumtree do not specify whether the dog has been vaccinated or not. But when information is provided, more than 90% of dogs have been vaccinated.
 
-###Desexing status
+### Desexing status
 The variable “Desexing Status” is a categorical variable.
 
-####Univariate plot
+#### Univariate plot
 As “Desexing Status” is a categorical variable, it can be visualised with a bar-chart (Fig. 6).
 ```{r, warning = F, error = F, fig.cap = "Figure 6: Bar-Chart of how many dogs have been desexed on gumtree."}
 ggplot(gumtree, aes(x = desex, fill = desex)) +
@@ -258,10 +258,10 @@ ggplot(gumtree, aes(x = desex, fill = desex)) +
 
 The majority of dog sale ads on gumtree do not specify whether the dog has been desexed. But when the information is provided, the majority of dogs have been desexed.
 
-###Relinquished status
+### Relinquished status
 The variable “Relinquished Status” is a categorical variable.
 
-####Univariate plot
+#### Univariate plot
 As “Relinquished Status” is a categorical variable, it can be visualised with a bar-chart (Fig. 7).
 ```{r, warning = F, error = F, fig.cap = "Figure 7: Bar-Chart of how many dogs have been relinquished on gumtree."}
 ggplot(gumtree, aes(x = relinquished, fill = relinquished)) +
