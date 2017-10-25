@@ -14,7 +14,11 @@ setwd("~/Second Year/Stats/R_Directory")
 gumtree <- read_rds("2.gumtree.rds")
 ```
 
-
+\centering
+\raggedright
+\newpage
+\tableofcontents
+\newpage
 
 
 # Cleaning Data
@@ -34,13 +38,13 @@ Now R understands which subjects have data, and the ones that don't have been se
 ```{r}
 summary(gumtree$price)  #View the summary statistics so far
 ```
-We see it's not concidering the price variable as quantitative data yet.
+We see it's not considering the price variable as quantitative data yet.
 
 ```{r}
-class(gumtree$price)   #checking the class of variable R conciders price at this point
+class(gumtree$price)   #checking the class of variable R considers price at this point
 
 ```
-R conciders Price to be of class 'character'. We need to chance class to 'numeric' since Price is a quantitative variable so that R can do maths with these values. 
+R considers Price to be of class 'character'. We need to chance class to 'numeric' since Price is a quantitative variable so that R can do maths with these values. 
 
 ```{r}
 gumtree$price <- as.numeric(gumtree$price)   #reset the class of Price to numeric so R knows these values are numbers
@@ -62,7 +66,7 @@ To be sure, we check the summary statistics:
 summary(gumtree$price)  #check the summary statics of Price
 ```
 
-The prices seem reasonable, so we concidert the price variablbe clean. 
+The prices seem reasonable, so we consider the price variablbe to be clean. 
 
 
 ### Cross
@@ -76,7 +80,7 @@ class(gumtree$cross)                        #Check the class of the variables
 gumtree$cross <- as.factor(gumtree$cross)   #set the class of the variable to factor
 
 ```
-Now the data seems reasonable, we concider it cleaned. 
+Now the data seems reasonable, we consider it cleaned. 
 
 ### Pet offered by
 'Pet Offered By:' is also a catagorical variable so same as above we need to change the class to factor and change the "NA" values to the R recognisable NA values.
@@ -88,7 +92,7 @@ class(gumtree$`Pet Offered By:`)                                      #See what 
 gumtree$`Pet Offered By:` <- as.factor(gumtree$`Pet Offered By:`)     #set the class to factor 
 summary(gumtree$`Pet Offered By:`)                                    #check the summary stats for good measure
 ```
-We see no apparent anomalies in the 'Pet Offered By:' data, so we concider it cleaned.  
+We see no apparent anomalies in the 'Pet Offered By:' data, so we consider it cleaned.  
 
 
 ### Microchipped
@@ -101,7 +105,7 @@ class(gumtree$micro)                          #check what the class of michrochi
 gumtree$micro <- as.factor(gumtree$micro)     #change the class of microchipped to factor
 summary(gumtree$micro)                        #Observe our recent changes
 ```
-The Microchipped data looks reasonable so we concider it cleaned. 
+The Microchipped data looks reasonable so we consider it cleaned. 
 
 
 ### Vaccinated
@@ -114,7 +118,7 @@ class(gumtree$vacc)                         #check the class of vaccinated
 gumtree$vacc<-as.factor(gumtree$vacc)       #change the class to factor
 table(gumtree$vacc)                         #Observe our recent changes
 ```
-The vaccinated data looks ready to work with so we concider it cleaned.
+The vaccinated data looks ready to work with so we consider it cleaned.
 
 ### Desexing Status
 The Desex variable is also a catagorical variable so same as above we need to change the class to factor and change the "NA" values to the R recognisable NA values.
@@ -175,7 +179,7 @@ Now we will check the age summary statistics again to see if everything is in or
 summary(gumtree$age)    #Observe the age summary statistics 
 ```
 
-These are much more reasonable values, and we concider the age variable cleaned.
+These are much more reasonable values, and we consider the age variable cleaned.
 Now we have completed all the cleaning of the data we can now start analysing it.
 
 # Variable Description
@@ -463,8 +467,8 @@ ggplot(gumtree, aes(x = relinquished, y = price)) + geom_boxplot()
 
 Again, we produce the same plot but against the natural logarithm of price, since the interquartile range spanned a small portion of the price axis when the outliers are considered.
 
-```{r, warning = F, error = F, fig.cap = "Figure 5.2: Boxplots of the natural logarithm of dog prices on Gumtree sorted by relinquished"}
-ggplot(gumtree %>% filter(!is.na(gumtree$state)), aes(x = state, y = log(price))) + geom_boxplot()
+```{r, warning = F, error = F, fig.cap = "Figure 7: Boxplots of the natural logarithm of dog prices on Gumtree sorted by relinquished"}
+ggplot(gumtree %>% filter(!is.na(gumtree$state)), aes(x = relinquished, y = log(price))) + geom_boxplot()
 ```
 
 #### Description
@@ -506,6 +510,14 @@ ggplot(gumtree, aes(x = age, y = log(price))) + geom_point()
 ```
 
 # Model Fitting
+
+We  define a version of the gumtree dataset (gumtreeN) without NA values in order to create our linear model.
+```{r}
+
+gumtreeN <- na.omit(gumtree)
+gumtreeN <- filter(gumtreeN, price >10)
+
+```
 
 First, we create bivariate regression models of price against each predictor variable, to decide whether they have enough of an effect on price individually, and if not, they will not be considered for the final model.
 
@@ -581,14 +593,6 @@ First, we create full and smallest versions of the model to indicate the scope, 
 
 full <-  price ~ (age + cross + micro + vacc + desex + relinquished)^2
 smallest <- price ~ 1
-
-```
-
-We also define a version of the gumtree dataset without NA values in order to create our linear model:
-```{r}
-
-gumtreeN <- na.omit(gumtree)
-gumtreeN <- filter(gumtreeN, price >10)
 
 ```
 
