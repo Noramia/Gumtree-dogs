@@ -441,6 +441,61 @@ ggplot(gumtree, aes(x = age, y = log(price))) + geom_point()
 
 # Model Fitting
 
+First, we create bivariate regression models of price against each predictor variable, to decide whether they have enough of an effect on price individually, and if not, they will not be considered for the final model.
+
+Modelling against age:
+
+```{r}
+age.lm <- lm(price ~ age, data = gumtreeN)
+glance(age.lm)
+```
+
+Modelling against cross:
+
+```{r}
+cross.lm <- lm(price ~ cross, data = gumtreeN)
+glance(cross.lm)
+```
+
+Modelling against microchipping status:
+
+```{r}
+micro.lm <- lm(price ~ micro, data = gumtreeN)
+glance(micro.lm)
+```
+
+
+Modelling against vaccination:
+
+```{r}
+vacc.lm <- lm(price ~ vacc, data = gumtreeN)
+glance(vacc.lm)
+```
+
+
+Modelling against desexing status:
+
+```{r}
+desex.lm <- lm(price ~ desex, data = gumtreeN)
+glance(desex.lm)
+```
+
+
+Modelling against whether or not the dog is relinquished:
+
+```{r}
+relinquished.lm <- lm(price ~ relinquished, data = gumtreeN)
+glance(relinquished.lm)
+```
+
+
+Modelling against the state in which state the dog is being sold:
+
+```{r}
+state.lm <- lm(price ~ state, data = gumtreeN)
+glance(state.lm)
+```
+
 First, we create full and smallest versions of the model to indicate the scope, or rather, the most and least detailed versions of the model:
 ```{r}
 
@@ -512,6 +567,68 @@ Equal variance: Check scale location plot. Looking for even spread as we go left
 Independence: Plots do not help. Price of dogs should theoretically be independent. 
 
 Notice in the residual vs fitted plot, the points tend to be clustered to the left. This suggests that data is right skewed. Perhaps we can get a better model with a log transform of price. We apply the 3 algorithms we used previously. 
+
+
+
+### Logarithm of Price
+
+First, we create bivariate regression models of log(price) against each predictor variable, to decide whether they have enough of an effect on log(price) individually, and if not, they will not be considered for the final model.
+
+Modelling against age:
+
+```{r}
+log_age.lm <- lm(log(price) ~ age, data = gumtreeN)
+glance(log_age.lm)
+```
+
+Modelling against cross:
+
+```{r}
+log_cross.lm <- lm(log(price) ~ cross, data = gumtreeN)
+glance(log_cross.lm)
+```
+
+Modelling against microchipping status:
+
+```{r}
+log_micro.lm <- lm(log(price) ~ micro, data = gumtreeN)
+glance(log_micro.lm)
+```
+
+
+Modelling against vaccination:
+
+```{r}
+log_vacc.lm <- lm(log(price) ~ vacc, data = gumtreeN)
+glance(log_vacc.lm)
+```
+
+
+Modelling against desexing status:
+
+```{r}
+log_desex.lm <- lm(log(price) ~ desex, data = gumtreeN)
+glance(log_desex.lm)
+```
+
+
+Modelling against whether or not the dog is relinquished:
+
+```{r}
+log_relinquished.lm <- lm(log(price) ~ relinquished, data = gumtreeN)
+glance(log_relinquished.lm)
+```
+
+
+Modelling against the state in which state the dog is being sold:
+
+```{r}
+log_state.lm <- lm(log(price) ~ state, data = gumtreeN)
+glance(log_state.lm)
+```
+
+
+## Logarithm of Price Model Selection
 
 Backward Model:
 
