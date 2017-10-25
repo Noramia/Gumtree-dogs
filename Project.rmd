@@ -73,10 +73,10 @@ class(gumtree$cross)                        #Check the class of the variables
 gumtree$cross <- as.factor(gumtree$cross)   #set the class of the variable to factor
 
 ```
-Now the data seems reasonable. 
+Now the data seems reasonable, we concider it cleaned. 
 
 ### Pet offered by
-
+'Pet Offered By:' is also a catagorical variable
 ```{r}
 table(gumtree$`Pet Offered By:`)
 gumtree$`Pet Offered By:`[gumtree$`Pet Offered By:` == "NA"] <- NA
