@@ -76,134 +76,104 @@ gumtree$cross <- as.factor(gumtree$cross)   #set the class of the variable to fa
 Now the data seems reasonable, we concider it cleaned. 
 
 ### Pet offered by
-'Pet Offered By:' is also a catagorical variable
+'Pet Offered By:' is also a catagorical variable so same as above we need to change the class to factor and change the "NA" values to the R recognisable NA values.
 ```{r}
-table(gumtree$`Pet Offered By:`)
-gumtree$`Pet Offered By:`[gumtree$`Pet Offered By:` == "NA"] <- NA
-table(gumtree$`Pet Offered By:`)
-class(gumtree$`Pet Offered By:`)
-gumtree$`Pet Offered By:` <- as.factor(gumtree$`Pet Offered By:`)
-summary(gumtree$`Pet Offered By:`)
+table(gumtree$`Pet Offered By:`)                                      #Check the currnet status of the 'Pet Offered By:' values in R
+gumtree$`Pet Offered By:`[gumtree$`Pet Offered By:` == "NA"] <- NA    #Set al the string "NA" values to NA in R
+table(gumtree$`Pet Offered By:`)                                      #Check that the changed values are now NA
+class(gumtree$`Pet Offered By:`)                                      #See what class"Pet Offered By:' is
+gumtree$`Pet Offered By:` <- as.factor(gumtree$`Pet Offered By:`)     #set the class to factor 
+summary(gumtree$`Pet Offered By:`)                                    #check the summary stats for good measure
 ```
-No apparent anomalies in the data.  
+We see no apparent anomalies in the 'Pet Offered By:' data, so we concider it cleaned.  
 
 
 ### Microchipped
-
+The Microchipped variable is also a catagorical variable so same as above we need to change the class to factor and change the "NA" values to the R recognisable NA values.
 ```{r}
-table(gumtree$micro)
-gumtree$micro[gumtree$micro == "NA"] <- NA
-table(gumtree$micro)
-class(gumtree$micro)
-gumtree$micro <- as.factor(gumtree$micro)
-summary(gumtree$micro)
+table(gumtree$micro)                          #Check the current microchipped data 
+gumtree$micro[gumtree$micro == "NA"] <- NA    #set all the string "NA" values to NA in R
+table(gumtree$micro)                          #Make sure those values have changed
+class(gumtree$micro)                          #check what the class of michrochipped is
+gumtree$micro <- as.factor(gumtree$micro)     #change the class of microchipped to factor
+summary(gumtree$micro)                        #Observe our recent changes
 ```
-Data looks fine. 
+The Microchipped data looks reasonable so we concider it cleaned. 
 
 
 ### Vaccinated
-
+The vaccinated variable is also a catagorical variable so same as above we need to change the class to factor and change the "NA" values to the R recognisable NA values.
 
 ```{r}
-table(gumtree$vacc)
-gumtree$vacc[gumtree$vacc == "NA"] <- NA
-class(gumtree$vacc)
+table(gumtree$vacc)                         #check the current vaccinated data
+gumtree$vacc[gumtree$vacc == "NA"] <- NA    #change the string "NA" values to NA in R
+class(gumtree$vacc)                         #check the class of vaccinated
+gumtree$vacc<-as.factor(gumtree$vacc)       #change the class to factor
+table(gumtree$vacc)                         #Observe our recent changes
 ```
-Let's change this to a categorical variable. 
-```{r}
-gumtree$vacc<-as.factor(gumtree$vacc)
-table(gumtree$vacc)
-```
+The vaccinated data looks ready to work with so we concider it cleaned.
 
 ### Desexing Status
-
-
-```{r}
-table(gumtree$desex)
-gumtree$desex[gumtree$desex == "NA"] <- NA
-class(gumtree$desex)
-```
-Let's change it to categorical. 
+The Desex variable is also a catagorical variable so same as above we need to change the class to factor and change the "NA" values to the R recognisable NA values.
 
 ```{r}
-gumtree$desex<-as.factor(gumtree$desex)
-table(gumtree$desex)
+table(gumtree$desex)                          #check the current desex data 
+gumtree$desex[gumtree$desex == "NA"] <- NA    #change the string "NA" to the NA in R
+class(gumtree$desex)                          #Check the class of desex 
+gumtree$desex<-as.factor(gumtree$desex)       #change the class to factor
+table(gumtree$desex)                          #Observe our recent changes
 ```
-
-
-
+The Desex data is now clean and ready to gleam!
 
 ### Relinquished
 
-
+The Relinquished variable is also a catagorical variable so same as above we need to change the class to factor and change the "NA" values to the R recognisable NA values.
 ```{r}
-table(gumtree$relinquished)
-gumtree$relinquished[gumtree$relinquished == "NA"] <- NA
-class(gumtree$relinquished)
-gumtree$relinquished <- as.factor(gumtree$relinquished)
-table(gumtree$relinquished)
+table(gumtree$relinquished)                                 #check the current relinquished data
+gumtree$relinquished[gumtree$relinquished == "NA"] <- NA    #change the string value of "NA" to NA R value
+class(gumtree$relinquished)                                 #check the class of relinquished
+gumtree$relinquished <- as.factor(gumtree$relinquished)     #change the class of relinquished to factor
+table(gumtree$relinquished)                                 #observe our recent changes
 ```
-Data looks fine. 
+We see the relinquished data is like a whistle, clean, ready for analysis!
 
 ### Age
-
+The Age variable is a quantitative variable so we will need to change the class to numeric. The Age data also contains string "NA" values which will need to be changed to the NA value R recognises.
 
 ```{r, eval = FALSE}
-table(gumtree$age)
-gumtree$age[gumtree$age == "NA"] <- NA
-class(gumtree$age)
-gumtree$relinquished <- as.factor(gumtree$relinquished)
-table(gumtree$age)
+table(gumtree$age)                        #check the current Age data
+gumtree$age[gumtree$age == "NA"] <- NA    #change all "NA" values to the NA values R likes
+class(gumtree$age)                        #check the class of age
+gumtree$age <- as.numeric(gumtree$age)    #change the class to numeric
+table(gumtree$age)                        #observe the recent changes
 ```
 
-Checking plot of age to pass stupidity test:
-  
+We will no do a stupidity test for the Age variable by plotting the values in a histogram to see it seems legit.
   
 ```{r}
 ggplot(gumtree, aes(age)) +
-  geom_histogram(col = "black", fill = "Light Blue")
+  geom_histogram(col = "black", fill = "Light Blue")    #plot a histogram of dog ages
 ```
-
-#This doesn't look right, check summary:
-
-summary(gumtree$age)
-
-This doesn't look right, check summary:
-
-```{r}
-summary(gumtree$age)
+The histogram doesn't look how it's supposed to so we check the sumary of the age data
+```{r{
+summary(gumtree$age)    # check the summary statistics for the age data
 ```
-
-How bizzare, at least on dog is less than 0 years old, and at least one is 545.8 years old. Lets filter out those in unreasonable age ranges.
-
-```{r}
-gumtree %>%
-  filter(age>25) %>%
-  select(age)
-```
-
-```{r}
-gumtree %>%
-  filter(age<0) %>%
-  select(age)
-```
+As seen in the summary statistics, the min age for dogs is a negative number and the maximum age for dogs is 545.8 years old. This obviously does not pass the stupidity test, dogs can live for a while but not that long! We need to filter out the unreasonable ages of dogs so that they do not skew the data.
 
 Since we have the go ahead from the researcher that these values are wrong, we will remove them from the dataset:
 
 ```{r}
 gumtree <- gumtree %>%
-  filter(age>0, age<26)
+  filter(age>0, age<26)   #filter out the dogs with unreasonable ages less than 0 or greater than 25
 ```
 
-Now we will check the summary again:
+Now we will check the age summary statistics again to see if everything is in order:
 ```{r}
-summary(gumtree$age)
+summary(gumtree$age)    #Observe the age summary statistics 
 ```
 
-These are much more reasonable values.
-
-
-
+These are much more reasonable values, and we concider the age variable cleaned.
+Now we have completed all the cleaning of the data we can now start analysing it.
 
 # Bivariate Analysis
 
