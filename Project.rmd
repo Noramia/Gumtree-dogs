@@ -481,6 +481,56 @@ Equal variance: Check scale location plot. Looking for even spread as we go left
 
 Independence: Plots do not help. Price of dogs should theoretically be independent. 
 
+Notice in the residual vs fitted plot, the points tend to be clustered to the left. This suggests that data is right skewed. Perhaps we can get a better model with a log transform of price. We apply the 3 algorithms we used previously. Since log(0) is infinite, we will do a +1 offset. This should be ok as the offset is small. 
+
+Backward Model:
+
+```{r}
+  log_full <-  log(price+1) ~ (age + cross + micro + vacc + desex + relinquished)^2
+  smallest <- log(price+1) ~ 1
+  
+  options(width = 150)
+  log_bM <- lm(log_full, data = gumtreeN)
+  log_bM <- step(log_bM, direction = "backward")
+  tidy(log_bM)
+```
+
+Forward Model: 
+```{r}
+ options(width = 150)
+  log_fM <- lm(log_full, data = gumtreeN)
+  log_fM <- step(log_bM, direction = "forward")
+  tidy(log_bM)
+```
+
+Stepwise Model:
+
+```{r}
+ options(width = 150)
+  log_sM <- lm(log_full, data = gumtreeN)
+  log_sM <- step(log_bM, direction = "both")
+  tidy(log_bM)
+```
+
+Let's put the 3 models next to each other. Notice that they are the same. Let's call this model log_model.
+
+```{r}
+list(backwards = log_bM,
+     forwards = log_fM,
+     step = log_sM) %>%
+  map_df(broom::tidy, .id = "Model") %>%
+  select(Model, term, estimate) %>%
+  spread(Model, estimate)
+```
+
+Let's check our assumptions. 
+```{r}
+log_model<-log_sM
+summary(log_model)
+tmp<-par(mfrow=c(2,2))
+plot(log_model)
+
+```
 
 # Prediction
 **This is not final as model selection is unfinished, but the code seems to work**
