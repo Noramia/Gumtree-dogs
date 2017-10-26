@@ -635,26 +635,35 @@ Next, three different algorithms will be used to determine the model, and the re
 
 First, the backwards selection method is used:
 
-```{r}
+```{r, warning = FALSE, error = FALSE, message = FALSE}
 options(width = 150)
 bM <- lm(full, data = gumtreeN)
 bM <- step(bM, direction = "backward")
+```
+
+```{r}
 tidy(bM)
 ```
 
 Next, the forwards selection method is used:
-```{r}
+```{r, warning = FALSE, error = FALSE, message = FALSE}
 options(width = 150)
 fM <- lm(smallest, data = gumtreeN)
 fM <- step(fM, scope = full, direction = "forward")
+```
+
+```{r}
 tidy(fM)
 ```
 
 Finally, the stepwise selection method is used:
-```{r}
+```{r, warning = FALSE, error = FALSE, message = FALSE}
 options(width = 150)
 sM <- lm(smallest, data = gumtreeN)
 sM <- step(sM, scope = full, direction = "both")
+```
+
+```{r}
 tidy(sM)
 ```
 
@@ -673,7 +682,7 @@ Let's check our assumptions for this model. We will call it test_model.
 
 ```{r}
 test_model<-sM
-summary(test_model)
+glance(test_model)
 tmp<-par(mfrow=c(2,2))
 plot(test_model)
 ```
@@ -760,21 +769,27 @@ The p-value is greater than the significance level of 0.1, hence the state data 
 
 Backward Model:
 
-```{r}
+```{r, warning = FALSE, error = FALSE, message = FALSE}
   log_full <-  log(price+1) ~ (age + cross + desex + relinquished)^2
   smallest <- log(price+1) ~ 1
   
   options(width = 150)
   log_bM <- lm(log_full, data = gumtreeN)
   log_bM <- step(log_bM, direction = "backward")
+```
+
+```{r}
   tidy(log_bM)
 ```
 
 Forward Model: 
-```{r}
+```{r, warning = FALSE, error = FALSE, message = FALSE}
  options(width = 150)
   log_fM <- lm(log_full, data = gumtreeN)
   log_fM <- step(log_bM, direction = "forward")
+```
+
+```{r}
   tidy(log_bM)
 ```
 
@@ -784,6 +799,9 @@ Stepwise Model:
  options(width = 150)
   log_sM <- lm(log_full, data = gumtreeN)
   log_sM <- step(log_bM, direction = "both")
+```
+
+```{r}
   tidy(log_bM)
 ```
 
@@ -801,7 +819,7 @@ list(backwards = log_bM,
 Let's check our assumptions. 
 ```{r}
 log_model<-log_sM
-summary(log_model)
+glance(log_model)
 tmp<-par(mfrow=c(2,2))
 plot(log_model)
 
