@@ -110,7 +110,7 @@ gumtree$`Pet Offered By:` <- as.factor(gumtree$`Pet Offered By:`)
 
 We see no apparent anomalies in the 'Pet Offered By:' data, so we consider it cleaned. The data seems reasonable and it seem to pass the stupidity test, there are only 2 factors.
 
-### Microchipped
+### Microchipping Status
 The Microchipped variable is also a catagorical variable so same as above we need to change the class to factor and change the "NA" values to the R recognisable NA values.
 ```{r}
 table(gumtree$micro)                          #Check the current microchipped data 
@@ -125,7 +125,7 @@ gumtree$micro <- as.factor(gumtree$micro)     #change the class of microchipped 
 ```
 The Microchipped data looks reasonable so we consider it cleaned. The data seems reasonable and it seem to pass the stupidity test, there are only either microchipped or not microchipped. 
 
-### Vaccinated
+### Vaccination Status
 The vaccinated variable is also a catagorical variable so same as above we need to change the class to factor and change the "NA" values to the R recognisable NA values.
 
 ```{r}
@@ -155,7 +155,7 @@ gumtree$desex<-as.factor(gumtree$desex)       #change the class to factor
 ```
 The Desex data is now clean. The data seems reasonable and it seem to pass the stupidity test, there are only either desex or entire.
 
-### Relinquished
+### Relinquished Status
 
 The Relinquished variable is also a catagorical variable so same as above we need to change the class to factor and change the "NA" values to the R recognisable NA values.
 ```{r}
@@ -182,7 +182,7 @@ gumtree$age <- as.numeric(gumtree$age)    #change the class to numeric
 table(gumtree$age)                        #observe the recent changes
 ```
 
-We will now do a stupidity test for the Age variable by plotting the values in a histogram to see if it seems legit.
+We will now do a stupidity test for the Age variable by plotting the values in a histogram to see if it seems reasonable.
   
 ```{r}
 ggplot(gumtree, aes(age)) +
@@ -209,6 +209,8 @@ summary(gumtree$age)    #Observe the age summary statistics
 
 These are much more reasonable values, and we consider the age variable cleaned.
 Now we have completed all the cleaning of the data we can now start analysing it.
+
+
 
 # Variable Description
 
@@ -257,7 +259,7 @@ Figure number stuff to check that it works
 
 The majority of dogs for sale on gumtree are offered by their owners.
 
-### Microchip
+### Microchipping Status
 The variable  Microchip is a categorical variable.
 
 #### Univariate plot
@@ -270,7 +272,7 @@ ggplot(gumtree, aes(x = micro, fill = micro)) +
 
 The majority of dog sale ads on gumtree do not specify whether the dog has been microchipped or not. But when information is provided, more than 90% of dogs for sale have been microchipped.
 
-### Vaccination
+### Vaccination Status
 The variable  Vaccination is a categorical variable.
 
 #### Univariate plot
@@ -309,7 +311,42 @@ ggplot(gumtree, aes(x = relinquished, fill = relinquished)) +
 
 The majority of dogs for sale on gumtree have been relinquished.
 
+
+### Age
+
+The variable Age is a numerical variable taking integer values.
+
+#### Univariate Plot
+
+```{r, warning = F, error = F}
+ggplot(gumtree,aes(x = age)) +
+  geom_histogram(ccol = "black", fill = "Light Blue") +
+  labs(x = "Age of Dogs.")
+```
+
 # Bivariate Analysis
+
+  
+### Cross
+
+```{r, warning = F, error = F, fig.cap = "Figure 8: Boxplots of dog prices on Gumtree sorted by cross"}
+ggplot(gumtree, aes(x = cross, y = price)) + geom_boxplot()
+```
+
+#### Description
+
+**Shape:**
+The distribution of prices for dogs which are and are not been cross breeds appear to both be right-skeweed. Mean price seems to be slightly higher for breeds that are not crossed.
+
+**Location:**
+The centre of the data for dogs which are not been cross breeds is at a slightly higher price than those which are
+
+**Spread:**
+Prices of dogs which have been cross bred have a slightly wider spread of data than those which have not.
+
+**Outliers:**
+Both dogs which are cross breeds and those which are not have a large number of more extreme prices which can be considered to be outliers.
+
 
 ### Pet Offered By
 
@@ -340,7 +377,7 @@ There is a much wider range of prices of dogs sold by breeders than those sold b
 There are a number of outliers well above the majority of the prices for dogs sold by owners, most likely special breeds, and six outliers sold by breeders.
 
 
-### Microchip
+### Microchipping Status
 
 Here we produce a boxplot for pets offered by owners and those offered by breeders against the response variable price:
 
@@ -472,26 +509,6 @@ Most states have a smilarly small spread of data, except Victoria which has a wi
 All states appear to have a number of outliers, with the least extreme prices in Tasmania. Most outliers seem to be skewed towards a higher price.
 
   
-  
-### Cross
-
-```{r, warning = F, error = F, fig.cap = "Figure 8: Boxplots of dog prices on Gumtree sorted by cross"}
-ggplot(gumtree, aes(x = cross, y = price)) + geom_boxplot()
-```
-
-#### Description
-
-**Shape:**
-The distribution of prices for dogs which are and are not been cross breeds appear to both be right-skeweed. Mean price seems to be slightly higher for breeds that are not crossed.
-
-**Location:**
-The centre of the data for dogs which are not been cross breeds is at a slightly higher price than those which are
-
-**Spread:**
-Prices of dogs which have been cross bred have a slightly wider spread of data than those which have not.
-
-**Outliers:**
-Both dogs which are cross breeds and those which are not have a large number of more extreme prices which can be considered to be outliers.
 
 ### Relinquished
 
@@ -635,7 +652,7 @@ Next, three different algorithms will be used to determine the model, and the re
 
 First, the backwards selection method is used:
 
-```{r, warning = FALSE, error = FALSE, message = FALSE}
+```{r, include = FALSE}
 options(width = 150)
 bM <- lm(full, data = gumtreeN)
 bM <- step(bM, direction = "backward")
@@ -646,7 +663,7 @@ tidy(bM)
 ```
 
 Next, the forwards selection method is used:
-```{r, warning = FALSE, error = FALSE, message = FALSE}
+```{r, include = FALSE}
 options(width = 150)
 fM <- lm(smallest, data = gumtreeN)
 fM <- step(fM, scope = full, direction = "forward")
@@ -657,7 +674,7 @@ tidy(fM)
 ```
 
 Finally, the stepwise selection method is used:
-```{r, warning = FALSE, error = FALSE, message = FALSE}
+```{r, include = FALSE}
 options(width = 150)
 sM <- lm(smallest, data = gumtreeN)
 sM <- step(sM, scope = full, direction = "both")
@@ -769,7 +786,7 @@ The p-value is greater than the significance level of 0.1, hence the state data 
 
 Backward Model:
 
-```{r, warning = FALSE, error = FALSE, message = FALSE}
+```{r, include = FALSE}
   log_full <-  log(price) ~ (age + cross + desex + relinquished)^2
   smallest <- log(price) ~ 1
   
@@ -783,7 +800,7 @@ Backward Model:
 ```
 
 Forward Model: 
-```{r, warning = FALSE, error = FALSE, message = FALSE}
+```{r, include = FALSE}
  options(width = 150)
   log_fM <- lm(log_full, data = gumtreeN)
   log_fM <- step(log_bM, direction = "forward")
@@ -795,7 +812,7 @@ Forward Model:
 
 Stepwise Model:
 
-```{r}
+```{r, include = FALSE}
  options(width = 150)
   log_sM <- lm(log_full, data = gumtreeN)
   log_sM <- step(log_bM, direction = "both")
@@ -844,7 +861,7 @@ predict(log_bM, data.frame(state = "SA", cross = "yes", age = 1, vacc = "vaccina
                        micro = "microchipped"), interval = "predict")
 ```
 
-We were asked to predict the price of a South Australian, cross-breed dog that is 1 year old. The dog is vaccinated, desexed and unfortunately has to be re-homed because the owner is moving interstate. we will use our log model which only uses the predictors, age,cross, desex and relinquished. 
+We were asked to predict the price of a South Australian, cross-breed dog that is 1 year old. The dog is vaccinated, desexed and unfortunately has to be re-homed because the owner is moving interstate. we will use our log model which only uses the predictors, age, cross, desex and relinquished. 
 
 Based on our model the log price of the dog is 4.571763. 
 
@@ -856,6 +873,6 @@ Hence the predicted price for this dog is $96.71. That is to say our model predi
 
 Reference:
 
-All code for this paper is openly available on github. 
+All code for this paper is openly available on github. The relevant code can be found in the .rmd document.
 
 https://github.com/Noramia/Gumtree-dogs
