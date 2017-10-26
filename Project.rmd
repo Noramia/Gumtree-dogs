@@ -1,13 +1,16 @@
 ---
+output:
+  html_document: default
+  pdf_document: default
+---
+
+\pagenumbring{gobble}
+
+---
 title: 'A look into gumtree dogs analysis '
 author: Shingyan Kwong, Roman Stepchyn, Gerald Mathias, Scarlett Groom-Ransom, Oliver
   Lountain
 date: "October 15, 2017"
-output:
-  html_document: default
-  pdf_document: default
-  word_document: default
-fontsize: 12pt
 ---
 
 ```{r setup, include=FALSE}
@@ -23,6 +26,7 @@ gumtree <- read_rds("2.gumtree.rds")
 \centering
 \raggedright
 \newpage
+\pagenumbring{arabic}
 \tableofcontents
 \newpage
 
