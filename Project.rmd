@@ -4,9 +4,9 @@ author: Shingyan Kwong, Roman Stepchyn, Gerald Mathias, Scarlett Groom-Ransom, O
   Lountain
 date: "October 15, 2017"
 output:
-  word_document: default
-  pdf_document: default
   html_document: default
+  pdf_document: default
+  word_document: default
 fontsize: 12pt
 ---
 
@@ -695,7 +695,7 @@ Equal variance: Check scale location plot. Looking for even spread as we go left
 
 Independence: Plots do not help. Price of dogs should theoretically be independent. 
 
-Notice in the residual vs fitted plot, the points tend to be clustered to the left. This suggests that data is right skewed. Perhaps we can get a better model with a log transform of price. We apply the 3 algorithms we used previously. Since log(0) is infinite, we will do a +1 offset. This should be ok as the offset is small. 
+Notice in the residual vs fitted plot, the points tend to be clustered to the left. This suggests that data is right skewed. Perhaps we can get a better model with a log transform of price. We apply the 3 algorithms we used previously. 
 
 
 
@@ -770,8 +770,8 @@ The p-value is greater than the significance level of 0.1, hence the state data 
 Backward Model:
 
 ```{r, warning = FALSE, error = FALSE, message = FALSE}
-  log_full <-  log(price+1) ~ (age + cross + desex + relinquished)^2
-  smallest <- log(price+1) ~ 1
+  log_full <-  log(price) ~ (age + cross + desex + relinquished)^2
+  smallest <- log(price) ~ 1
   
   options(width = 150)
   log_bM <- lm(log_full, data = gumtreeN)
@@ -825,15 +825,31 @@ plot(log_model)
 
 ```
 
+Linearity: Check residual vs fitted plot.  If assumption is true we expect the red line to be flat around 0. We see that there is a bit of curvature but it's not too bad. Hence linearity is reasonable. 
+
+Normality: Check normal QQ plot. If assumption is true we expect the points between -2 and 2 to fall on the diagonal line. We see that most points fall on the diagonal. Normality is ok and much better than previous model. 
+
+Constant variance: Check scale location plot. Looking for even spread as we go left to right.Some curvature is seen but is not too bad. Better than previous model. Equal variance is ok.
+
+Independence: Plots do not help. Price of dogs should theoretically be independent. 
+
+Given that the 4 assumptions are ok and the plots for the log model look better, we will go with the log model. 
+
+
 # Prediction
 **This is not final as model selection is unfinished, but the code seems to work**
 ```{r}
-predict(bM, data.frame(state = "SA", cross = "yes", age = 1, vacc = "vaccinated",
+predict(log_bM, data.frame(state = "SA", cross = "yes", age = 1, vacc = "vaccinated",
                        relinquished = "yes", desex = "Desexed",
                        micro = "microchipped"), interval = "predict")
 ```
 
-We were asked to predict the price of a South Australian, cross-breed dog that is 1 year old. The dog is vaccinated, desexed and unfortunately has to be re-homed because the owner is moving interstate.
+We were asked to predict the price of a South Australian, cross-breed dog that is 1 year old. The dog is vaccinated, desexed and unfortunately has to be re-homed because the owner is moving interstate. we will use our log model which only uses the predictors, age,cross, desex and relinquished. 
 
-Based on our model the price of the dog is $296. 
+Based on our model the log price of the dog is 4.571763. 
 
+```{r}
+exp(4.571763)
+```
+
+Hence the predicted price for this dog is $96.71. That is to say our model predicts that the median price for a dog of the traits above is $96.71. 
