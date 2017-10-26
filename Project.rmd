@@ -73,7 +73,7 @@ ggplot(gumtree, aes(price)) +
   The random variable price appears to be unimodal and right skewed.
 
 ### Cross
-Cross is a catagorical variable. We need to make sure R treat it as a catagorical variable and to reset the string values of "NA" to the R value NA if there are any. This make sure that R does not include that data in analysis.
+Cross is a catagorical variable. We need to make sure R treats it as a catagorical variable and to reset the string values of "NA" to the R value NA if there are any. This make sure that R does not include that data in analysis.
 
 ```{r}
 table(gumtree$cross)                        
@@ -213,11 +213,12 @@ Now we have completed all the cleaning of the data we can now start analysing it
 # Variable Description
 
 ### Price
+
 The variable Price is a quantitative random variable. It is continuous on the positive real number line.
 
 #### Univariate plot
 As Price is a quantitative continuous random variable, it can be visualised with a histogram (Fig. 1).
-```{r, warning = F, error = F, fig.cap = "Figure 1: Histogram of price of advertised dogs on gumtree in dollars."}
+```{r, warning = FALSE, error = FALSE, message = FALSE, fig.cap = "Histogram of price of advertised dogs on gumtree in dollars."}
 ggplot(gumtree,aes(x = price)) +
   geom_histogram(ccol = "black", fill = "Light Blue") +
   labs(x = "Price of dog in dollars.")
@@ -248,6 +249,11 @@ ggplot(gumtree, aes(x = `Pet Offered By:`, fill = `Pet Offered By:`)) +
   geom_bar()+
   labs(x = "Who is offering the pet for sale.")
 ```
+
+\begin{center}
+Figure number stuff to check that it works
+\end{center}
+
 
 The majority of dogs for sale on gumtree are offered by their owners.
 
@@ -342,7 +348,7 @@ Here we produce a boxplot for pets offered by owners and those offered by breede
 ggplot(gumtree, aes(x = micro, y = price)) + geom_boxplot()
 ```
 
-We can now filter out the NA values:
+We can now filter out the NA values.
 
 ```{r, warning = F, error = F, fig.cap = "Figure 2.1: Boxplots of dog prices on Gumtree sorted by whether dogs have been microchipped, without NA values"}
 ggplot(gumtree %>% filter(!is.na(gumtree$micro)), aes(x = micro, y = price)) + geom_boxplot()
