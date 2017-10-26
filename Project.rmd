@@ -71,9 +71,30 @@ ggplot(gumtree, aes(price)) +
 ```
 
   The random variable price appears to be unimodal and right skewed.
+  
+### State
+
+State is a categorical variable. We need to make sure R knows this is the case and reset string "NA"s to value NA. This make sure that R does not include that data in analysis.
+
+```{r}
+table(gumtree$state)
+gumtree$state[gumtree$state=="NA"]<- NA
+class(gumtree$state)
+gumtree$state <- as.factor(gumtree$state)
+```
+
+```{r}
+ggplot(gumtree,aes(state))+
+  geom_bar()+
+  labs(x="state sold")+
+  ggtitle("Bar chart of state")
+```
+
+
+
 
 ### Cross
-Cross is a catagorical variable. We need to make sure R treats it as a catagorical variable and to reset the string values of "NA" to the R value NA if there are any. This make sure that R does not include that data in analysis.
+Cross is a categorical variable. We need to make sure R treats it as a catagorical variable and to reset the string values of "NA" to the R value NA if there are any. This make sure that R does not include that data in analysis.
 
 ```{r}
 table(gumtree$cross)                        
@@ -873,6 +894,6 @@ Hence the predicted price for this dog is $96.71. That is to say our model predi
 
 Reference:
 
-All code for this paper is openly available on github. The relevant code can be found in the .rmd document.
+All code for this paper is openly available on github in the r markdown file. The relevant code can be found in the .rmd document.
 
 https://github.com/Noramia/Gumtree-dogs
