@@ -182,7 +182,7 @@ gumtree$age <- as.numeric(gumtree$age)    #change the class to numeric
 table(gumtree$age)                        #observe the recent changes
 ```
 
-We will now do a stupidity test for the Age variable by plotting the values in a histogram to see it seems legit.
+We will now do a stupidity test for the Age variable by plotting the values in a histogram to see if it seems legit.
   
 ```{r}
 ggplot(gumtree, aes(age)) +
@@ -554,7 +554,7 @@ gumtreeN <- filter(gumtreeN, price >10)
 
 ```
 
-First, we create bivariate regression models of price against each predictor variable, to decide whether they have enough of an effect on price individually, and if not, they will not be considered for the final model.
+First, we create bivariate regression models of price against each predictor variable, to decide whether they have enough of an effect on price individually, and if not, they will not be considered for the final model. For this initial selection process, we use a more relaxed significance level of 0.1, before during model selection, where the stricter significance level of 0.05 is used.
 
 Modelling against age:
 
@@ -563,7 +563,7 @@ age.lm <- lm(price ~ age, data = gumtreeN)
 glance(age.lm)
 ```
 
-The p-value is less than the significance level of 0.05, hence the age data should be considered for the final model.
+The p-value is less than the significance level of 0.1, hence the age data should be considered for the final model.
 
 Modelling against cross:
 
@@ -572,7 +572,7 @@ cross.lm <- lm(price ~ cross, data = gumtreeN)
 glance(cross.lm)
 ```
 
-The p-value is less than the significance level of 0.05, hence the cross data should be considered for the final model.
+The p-value is less than the significance level of 0.1, hence the cross data should be considered for the final model.
 
 Modelling against microchipping status:
 
@@ -581,7 +581,7 @@ micro.lm <- lm(price ~ micro, data = gumtreeN)
 glance(micro.lm)
 ```
 
-The p-value is greater than the significance level of 0.05, hence the microscipping status data need not be considered for the final model.
+The p-value is greater than the significance level of 0.1, hence the microscipping status data need not be considered for the final model.
 
 Modelling against vaccination:
 
@@ -590,7 +590,7 @@ vacc.lm <- lm(price ~ vacc, data = gumtreeN)
 glance(vacc.lm)
 ```
 
-The p-value is greater than the significance level of 0.05, hence the vaccination status data need not be considered for the final model.
+The p-value is greater than the significance level of 0.1, hence the vaccination status data need not be considered for the final model.
 
 Modelling against desexing status:
 
@@ -599,7 +599,7 @@ desex.lm <- lm(price ~ desex, data = gumtreeN)
 glance(desex.lm)
 ```
 
-The p-value is less than the significance level of 0.05, hence the desexing status data should be considered for the final model.
+The p-value is less than the significance level of 0.1, hence the desexing status data should be considered for the final model.
 
 Modelling against whether or not the dog is relinquished:
 
@@ -608,7 +608,7 @@ relinquished.lm <- lm(price ~ relinquished, data = gumtreeN)
 glance(relinquished.lm)
 ```
 
-The p-value is less than the significance level of 0.05, hence the relinquished data should be considered for the final model.
+The p-value is less than the significance level of 0.1, hence the relinquished data should be considered for the final model.
 
 Modelling against the state in which state the dog is being sold:
 
@@ -617,7 +617,7 @@ state.lm <- lm(price ~ state, data = gumtreeN)
 glance(state.lm)
 ```
 
-The p-value is greater than the significance level of 0.05, hence the state data need not be considered for the final model.
+The p-value is greater than the significance level of 0.1, hence the state data need not be considered for the final model.
 
 
 ### Model Selection
@@ -626,7 +626,7 @@ The p-value is greater than the significance level of 0.05, hence the state data
 First, we create full and smallest versions of the model to indicate the scope, or rather, the most and least detailed versions of the model:
 ```{r}
 
-full <-  price ~ (age + cross + micro + vacc + desex + relinquished)^2
+full <-  price ~ (age + cross + desex + relinquished)^2
 smallest <- price ~ 1
 
 ```
@@ -692,7 +692,7 @@ Notice in the residual vs fitted plot, the points tend to be clustered to the le
 
 ### Logarithm of Price
 
-First, we create bivariate regression models of log(price) against each predictor variable, to decide whether they have enough of an effect on log(price) individually, and if not, they will not be considered for the final model.
+First, we create bivariate regression models of log(price) against each predictor variable, to decide whether they have enough of an effect on log(price) individually, and if not, they will not be considered for the final model. Again, for this initial selection process, we use a more relaxed significance level of 0.1, before during model selection, where the stricter significance level of 0.05 is used.
 
 Modelling against age:
   
@@ -700,7 +700,7 @@ Modelling against age:
 log_age.lm <- lm(log(price) ~ age, data = gumtreeN)
 glance(log_age.lm)
 ```
-The p-value is less than the significance level of 0.05, hence the age data should be considered for the final logarithm model.
+The p-value is less than the significance level of 0.1, hence the age data should be considered for the final logarithm model.
 
 Modelling against cross:
   
@@ -708,7 +708,7 @@ Modelling against cross:
 log_cross.lm <- lm(log(price) ~ cross, data = gumtreeN)
 glance(log_cross.lm)
 ```
-The p-value is less than the significance level of 0.05, hence the cross data should be considered for the final logarithm model.
+The p-value is less than the significance level of 0.1, hence the cross data should be considered for the final logarithm model.
 
 Modelling against microchipping status:
   
@@ -717,7 +717,7 @@ log_micro.lm <- lm(log(price) ~ micro, data = gumtreeN)
 glance(log_micro.lm)
 ```
 
-The p-value is greater than the significance level of 0.05, hence the microshipping status data need not be considered for the final logarithm model.
+The p-value is greater than the significance level of 0.1, hence the microshipping status data need not be considered for the final logarithm model.
 
 Modelling against vaccination:
   
@@ -726,7 +726,7 @@ log_vacc.lm <- lm(log(price) ~ vacc, data = gumtreeN)
 glance(log_vacc.lm)
 ```
 
-The p-value is greater than the significance level of 0.05, hence the vaccination status data need not be considered for the final logarithm model.
+The p-value is greater than the significance level of 0.1, hence the vaccination status data need not be considered for the final logarithm model.
 
 Modelling against desexing status:
   
@@ -735,7 +735,7 @@ log_desex.lm <- lm(log(price) ~ desex, data = gumtreeN)
 glance(log_desex.lm)
 ```
 
-The p-value is less than the significance level of 0.05, hence the desexing status data should be considered for the final logarithm model.
+The p-value is less than the significance level of 0.1, hence the desexing status data should be considered for the final logarithm model.
 
 Modelling against whether or not the dog is relinquished:
   
@@ -744,7 +744,7 @@ log_relinquished.lm <- lm(log(price) ~ relinquished, data = gumtreeN)
 glance(log_relinquished.lm)
 ```
 
-The p-value is greater than the significance level of 0.05, hence the relinquished data need not be considered for the final logarithm model.
+The p-value is greater than the significance level of 0.1, hence the relinquished data should be considered for the final logarithm model.
 
 Modelling against the state in which state the dog is being sold:
   
@@ -753,7 +753,7 @@ log_state.lm <- lm(log(price) ~ state, data = gumtreeN)
 glance(log_state.lm)
 ```
 
-The p-value is greater than the significance level of 0.05, hence the state data need not be considered for the final logarithm model.
+The p-value is greater than the significance level of 0.1, hence the state data need not be considered for the final logarithm model.
 
 
 
@@ -761,7 +761,7 @@ The p-value is greater than the significance level of 0.05, hence the state data
 Backward Model:
 
 ```{r}
-  log_full <-  log(price+1) ~ (age + cross + micro + vacc + desex + relinquished)^2
+  log_full <-  log(price+1) ~ (age + cross + desex + relinquished)^2
   smallest <- log(price+1) ~ 1
   
   options(width = 150)
