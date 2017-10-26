@@ -853,3 +853,9 @@ exp(4.571763)
 ```
 
 Hence the predicted price for this dog is $96.71. That is to say our model predicts that the median price for a dog of the traits above is $96.71. 
+
+Reference:
+
+All code for this paper is openly available on github. 
+
+https://github.com/Noramia/Gumtree-dogs
