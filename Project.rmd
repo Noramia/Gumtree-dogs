@@ -2,12 +2,13 @@
 output:
   pdf_document: default
   html_document: default
+  word_document: default
 ---
 
 \pagenumbering{gobble}
 
 ---
-title: 'A look into gumtree dogs analysis '
+title: 'Analysis of Prices of Dogs for Sale on Gumtree'
 author: Shingyan Kwong, Roman Stepchyn, Gerald Mathias, Scarlett Groom-Ransom, Oliver
   Lountain
 date: "October 27, 2017"
@@ -32,12 +33,39 @@ gumtree <- read_excel("Gumtree_dogs.xlsx")
 \newpage
 
 
+# Introduction
+
+In this project, using collected data on dog sales, a prediction of the price of a dog will be made. To be able to make such a prediction, a model will be selected that best fits the data. To select which predictor variables to use in the model and which to reject, three algorithms will be used: backwards, forwards, and stepwise selection. Before the model fitting can be performed, the data will be analyzed and generally cleaned to remove any potential sources of error in the model.
+
+
+# Data Description
+
+For this project, data was collected from the website gumtree.com.au. Using an algorithm, information was extracted from the sale listings and organized into variables. The variables that were used for this project were:
+
+
+- The price of the dog for sale, in Australian dollars. This was the response variable.
+- Whether the dog has been microchipped or not. This was one of the predictor variables.
+- Whether the dog has been vaccinated or not. This was one of the predictor variables.
+- Whether the dog has been desexed or not (entire). This was one of the predictor variables.
+- Whether the dog is a crossbreed or not. This was one of the predictor variables.
+- Whether the dog has been relinquished or not. This was one of the predictor variables.
+- The dog’s age in years. This was one of the predictor variables.
+- What Australian state/territory the sale is being made from. This was one of the predictor variables.
+- Who is offering the pet for sale (either owner or breeder). This was one of the predictor variables.
+
+
+In total, 3450 sale data elements were collected from gumtree and 8 variables will be used to predict the price of a dog for sale. 
+
+
+
 # Cleaning Data
 
-First we will clean the values and variables by making sure all the values can  be interpreted by R and able to be properly analysed.
+First we will clean the values and variables by making sure all the values can  be interpreted by R and are able to be properly analysed.
 
 ### Price
-The price variable contains string inputs which need to be assigned to a numeric value and "NA" variables need to be set to the NA if there are any so that R can interpret so that it knows the data for that subject is unavailable.
+The price variable contains string (character) inputs which need to be assigned to a numeric value and "NA" variables, of the character typle, which need to be set to the type of NA which can be interpreted by R so that it knows the data for that subject is unavailable.
+
+The table of prices is shown below:
 
 ```{r}
 table(gumtree$price)                         
@@ -46,7 +74,7 @@ gumtree$price[gumtree$price == "NA"] <- NA
 # set all "NA" values to the NA anyway
 ```
   
-Now R understands which subjects have data, and the ones that don't have been set to NA. From here, we can check if it pass the stupidity test, i.e. no dogs with negative value and unreasonable amount. The prices seem reasonable as there are dogs with minimumu price of 0 and maximum price of 8000.  
+R now understands which subjects have data, and the ones that do not have been set to NA. From here, we can check if it pass the stupidity test, in other that there words no dogs with negative values for price. The prices seem reasonable as there are dogs with minimum price of $0 and maximum price of $8000.  
 
 ```{r}
 summary(gumtree$price)  
@@ -72,7 +100,7 @@ class(gumtree$price)
 We then produce a histogram of the price data (Figure 1), the data appears to be reasonable, it will be described in the varaible description section. 
 
 
-```{r, error = FALSE, warning = FALSE, message = FALSE, fig.cap = "Histogram of Prices of Dogs on Gumtree"}
+```{r, error = FALSE, warning = FALSE, message = FALSE, fig.cap = "Histogram of Prices of Dogs on Gumtree."}
 ggplot(gumtree, aes(price)) +
   geom_histogram(col = "black", fill = "Light Blue")    #plot a histogram of dog ages
 ```
@@ -85,15 +113,24 @@ ggplot(gumtree, aes(price)) +
 State is a categorical variable. We need to make sure R knows this is the case and reset string "NA"s to value NA. This make sure that R does not include that data in analysis.
 
 
-```{r, error = FALSE, warning = FALSE, fig.cap = "Bar Chart of State Data"}
-ggplot(gumtree,aes(state))+
-  geom_bar()+
-  labs(x="state sold")+
-  ggtitle("Bar chart of state")
+```{r}
+table(gumtree$state)
+gumtree$state[gumtree$state=="NA"]<- NA
+```
+
+We now check the class of variable for state:
+
+```{r}
+class(gumtree$state)
+```
+
+Since it is a character, we convert it to the factor class of varaible:
+
+```{r}
+gumtree$state <- as.factor(gumtree$state)
 ```
 
 
-\newpage
 
 ### Cross
 Cross is a catagorical variable. We need to make sure R treats it as a catagorical variable and to reset the string values of "NA" to the R value NA if there are any. This make sure that R does not include that data in analysis.
@@ -126,7 +163,7 @@ Now the data seems reasonable and it seem to pass the stupidity test, in other w
 \newpage
   
 ### Pet offered by
-'Pet Offered By:' is also a catagorical variable so as was the case for the cross data, we need to change the class to factor and change the "NA" values to the R recognisable NA values if there are any.
+'Pet Offered By:' is also a catagorical variable, so, as was the case for the cross data, we need to change the class to factor and change the "NA" values to the R recognisable NA values if there are any.
 ```{r}
 table(gumtree$`Pet Offered By:`)
 #Check the currnet status of the 'Pet Offered By:' values in R
@@ -255,7 +292,7 @@ table(gumtree$age)                        #observe the recent changes
 
 We will now do a stupidity test for the Age variable by plotting the values in a histogram to see if it seems reasonable.
   
-```{r, error = FALSE, warning = FALSE, message = FALSE, fig.cap = "Histogram of Ages of Dogs on Gumtree"}
+```{r, error = FALSE, warning = FALSE, message = FALSE, fig.cap = "Histogram of Ages of Dogs on Gumtree."}
 ggplot(gumtree, aes(age)) +
   geom_histogram(col = "black", fill = "Light Blue")    #plot a histogram of dog ages
 ```
@@ -263,8 +300,7 @@ ggplot(gumtree, aes(age)) +
 
 \newpage
 
-The histogram doesn't look how it's supposed to so we check the sumary of the age data
-***we can just use the sumamry instead of the histogram.
+The histogram looks odd, so we check the summary statistics of age:
 ```{r}
 summary(gumtree$age)    # check the summary statistics for the age data
 ```
@@ -294,10 +330,10 @@ Now we have completed all the cleaning of the data we can now start analysing it
 The variable Price is a quantitative random variable. It is continuous on the positive real number line.
 
 #### Univariate plot
-As Price is a quantitative continuous random variable, it can be visualised with a histogram (Figure  4).
+As Price is a quantitative continuous random variable, it can be shown on a histogram (Figure  3).
 
 
-```{r, warning = FALSE, error = FALSE, message = FALSE, fig.cap = "Histogram of price of advertised dogs on gumtree in dollars."}
+```{r, warning = FALSE, error = FALSE, message = FALSE, fig.cap = "Histogram of Price of dogs advertised on Gumtree in dollars."}
 ggplot(gumtree,aes(x = price)) +
   geom_histogram(col = "black", fill = "Light Blue") +
   labs(x = "Price of dog in dollars.")
@@ -311,12 +347,12 @@ The random variable  Price appears to be unimodal and right skewed. The mean pri
 The variable  cross is a categorical variable.
 
 #### Univariate plot
-As  cross is a categorical variable, it can be seen on the following bar-chart (Figure 5).
+As  cross is a categorical variable, it can be seen on the following bar-chart (Figure 4).
 
 
-```{r, warning = F, error = F, fig.cap = "Bar Chart of crossbreed status of advertised dogs on gumtree."}
+```{r, warning = F, error = F, fig.cap = "Bar Chart of Crossbreed Status of dogs advertised on Gumtree."}
 ggplot(gumtree,aes(x = cross, fill = cross)) +
- geom_bar()+
+ geom_bar(fill = "Grey")+
  labs(x = "Crossbreed status of dog.")
 ```
 
@@ -324,23 +360,35 @@ ggplot(gumtree,aes(x = cross, fill = cross)) +
 It appears more purebred dogs are for sale on gumtree; approximately twice as many as there are crossbred dogs.
 
 
+### State
+The variable 'State' is categorical variable.
+
+#### Univariate Plot
+As state is a categorical variable, it is displayed on the following bar chart (Figure 5):
+
+
+```{r, error = FALSE, warning = FALSE, fig.cap = "Bar Chart of State Data"}
+ggplot(gumtree,aes(state))+
+  geom_bar(fill = "Grey")+
+  labs(x="state sold")+
+  ggtitle("Bar Chart of State Data")
+```
+
+Here it can be seen that a large proportion of the dogs do not have any state data, this will be adressed when the data is analysed further.
+
+
 ### Pet offered by
 The variable 'Pet Offered By:' is a categorical variable.
 
-#### Univariate plot
-As  Pet Offered By is a categorical variable, it can be seen on the following bar-chart (Figure 6).
+#### Univariate Plot
+As  Pet Offered By is a categorical variable, it is shown on the following bar-chart (Figure 6):
 
 
-```{r, warning = F, error = F, fig.cap = "Bar-Chart of who is the pet offered by on gumtree."}
+```{r, warning = F, error = F, fig.cap = "Bar-Chart of who the pet is offered by on Gumtree."}
 ggplot(gumtree, aes(x = `Pet Offered By:`, fill = `Pet Offered By:`)) +
-  geom_bar()+
+  geom_bar(fill = "Grey")+
   labs(x = "Who is offering the pet for sale.")
 ```
-
-
-\begin{center}
-Figure number stuff to check that it works
-\end{center}
 
 
 The majority of dogs for sale on gumtree are offered by their owners.
@@ -352,9 +400,9 @@ The variable  Microchip is a categorical variable.
 As  Microchip is a categorical variable, it can be seen on the following bar-chart (Figure 7).
 
 
-```{r, warning = F, error = F, fig.cap = "Bar-Chart of how many dogs are Microchipped on gumtree."}
+```{r, warning = F, error = F, fig.cap = "Bar-Chart of how many dogs are Microchipped on Gumtree."}
 ggplot(gumtree, aes(x = micro, fill = micro)) +
-   geom_bar()+
+   geom_bar(fill = "Grey")+
    labs(x = "Status of dogs being microchipped.")
 ```
 
@@ -368,9 +416,9 @@ The variable  Vaccination is a categorical variable.
 As  Vaccination is a categorical variable, it can be seen on the following bar-chart (Figure  8).
 
 
-```{r, warning = F, error = F, fig.cap = "Bar-chart of how many dogs have been vaccinated on gumtree."}
+```{r, warning = F, error = F, fig.cap = "Bar-chart of how many dogs have been vaccinated on Gumtree."}
 ggplot(gumtree, aes(x = vacc, fill = vacc)) +
-   geom_bar()+
+   geom_bar(fill = "Grey")+
    labs(x = "Status of dogs being vaccinated.")
 ```
 
@@ -383,9 +431,9 @@ The variable  Desexing Status is a categorical variable.
 As  Desexing Status is a categorical variable, it can be visualised with a bar-chart (Figure 9).
 
 
-```{r, warning = F, error = F, fig.cap = "Bar-Chart of how many dogs have been desexed on gumtree."}
+```{r, warning = F, error = F, fig.cap = "Bar-Chart of how many dogs have been desexed on Gumtree."}
 ggplot(gumtree, aes(x = desex, fill = desex)) +
-   geom_bar()+
+   geom_bar(fill = "Grey")+
    labs(x = "Desex status of dogs.")
 ```
 
@@ -399,9 +447,9 @@ The variable  Relinquished Status is a categorical variable.
 As Relinquished Status is a categorical variable, it can be seen on the following bar-chart (Figure 10).
 
 
-```{r, warning = F, error = F, fig.cap = "Bar-Chart of how many dogs have been relinquished on gumtree."}
+```{r, warning = F, error = F, fig.cap = "Bar-Chart of how many dogs have been relinquished on Gumtree."}
 ggplot(gumtree, aes(x = relinquished, fill = relinquished)) +
-   geom_bar()+
+   geom_bar(fill = "Grey")+
    labs(x = "Relinquished status of dogs.")
 ```
 
@@ -417,7 +465,7 @@ The variable Age is a numerical variable taking integer values.
 As age is a numerical variable, it is displayed on the following histogram (Figure 11):
 
 
-```{r, warning = F, error = F, message = F, fig.cap = "Histogram of Age of Dogs on Gumtree"}
+```{r, warning = F, error = F, message = F, fig.cap = "Histogram of Age of Dogs on Gumtree."}
 ggplot(gumtree,aes(x = age)) +
   geom_histogram(col = "black", fill = "Light Blue") +
   labs(x = "Age of Dogs.")
@@ -435,7 +483,7 @@ ggplot(gumtree,aes(x = age)) +
 
 Here, we produce a boxplot of dog prices sorted by cross (Figure 12):
 
-```{r, warning = F, error = F, fig.cap = "Boxplots of dog prices on Gumtree sorted by cross"}
+```{r, warning = F, error = F, fig.cap = "Boxplots of dog prices on Gumtree sorted by cross."}
 ggplot(gumtree, aes(x = cross, y = price)) + geom_boxplot()
 ```
 
@@ -445,7 +493,7 @@ ggplot(gumtree, aes(x = cross, y = price)) + geom_boxplot()
 The distribution of prices for dogs which are and are not been cross breeds appear to both be right-skeweed. Mean price seems to be slightly higher for breeds that are not crossed.
 
 **Location:**
-The centre of the data for dogs which are not been cross breeds is at a slightly higher price than those which are
+The centre of the data for dogs which are not been cross breeds is at a slightly higher price than those which are.
 
 **Spread:**
 Prices of dogs which have been cross bred have a slightly wider spread of data than those which have not.
@@ -454,20 +502,67 @@ Prices of dogs which have been cross bred have a slightly wider spread of data t
 Both dogs which are cross breeds and those which are not have a large number of more extreme prices which can be considered to be outliers.
 
 
+
+### State
+Here we produce a boxplot of dog prices sorted by the state in which they are being sold (FIgure 13):
+
+
+```{r, warning = F, error = F, fig.cap = "Boxplots of the dog prices on Gumtree sorted by state."}
+ggplot(gumtree, aes(x = state, y = price)) + geom_boxplot()
+```
+
+\newpage
+
+Without NA values (Figure 14):
+
+
+
+```{r, warning = F, error = F, fig.cap = "Boxplots of the dog prices on Gumtree sorted by state, without NA values."}
+ggplot(gumtree %>% filter(!is.na(gumtree$state)), aes(x = state, y = price)) + geom_boxplot()
+```
+
+
+Again, we produce the same plot but against the natural logarithm of price, since the interquartile range spanned a small portion of the price axis when the outliers are considered (Figure 15):
+
+
+```{r, warning = F, error = F, fig.cap = "Boxplots of the natural logarithm of dog prices on Gumtree sorted by state, without NA values."}
+ggplot(gumtree %>% filter(!is.na(gumtree$state)), aes(x = state, y = log(price))) + geom_boxplot()
+```
+
+
+#### Description
+
+**Shape:**
+The distribution of prices of dogs seem to be mostly symmetrical in all states, except the prices in Victoria may be slightly right-skewed.
+
+**Location:**
+The centre of the data for dogs prices is very similar amongst all states.
+
+**Spread:**
+Most states have a similarly small spread of data, except Victoria which has a wider spread, and ACT and WA which both have narrower spreads.
+
+**Outliers:**
+All states appear to have a number of outliers, with the least extreme prices in Tasmania. Most outliers seem to be skewed towards a higher price.
+
+
+
+
+
+
 ### Pet Offered By
 
-Here we produce a boxplot for pets offered by owners and those offered by breeders against the response variable price (Figure 13):
+Here we produce a boxplot for pets offered by owners and those offered by breeders against the response variable price (Figure 16):
 
 
-```{r, warning = F, error = F, fig.cap = "Boxplots of dog prices on Gumtree sorted by seller"}
+```{r, warning = F, error = F, fig.cap = "Boxplots of dog prices on Gumtree sorted by seller."}
 ggplot(gumtree, aes(x = `Pet Offered By:`, y = price)) + geom_boxplot()
 ```
 
 
-We now produce the same plot but against the natural logarithm of price, since the interquartile range spanned a small portion of the price axis when the outliers are considered (Figure 14).
+We then produce the same plot but against the natural logarithm of price, since the interquartile range spanned a small portion of the price axis when the outliers are considered (Figure 17).
 
 
-```{r, warning = F, error = F, fig.cap = "Boxplots of the natural logarithm of dog prices on Gumtree sorted by seller"}
+```{r, warning = F, error = F, fig.cap = "Boxplots of the natural logarithm of dog prices on Gumtree sorted by seller."}
 ggplot(gumtree, aes(x = `Pet Offered By:`, y = log(price))) + geom_boxplot()
 ```
 
@@ -475,7 +570,7 @@ ggplot(gumtree, aes(x = `Pet Offered By:`, y = log(price))) + geom_boxplot()
 #### Description
 
 **Shape:**
-Both seem to be symmetrical aside from outliers, breeeder have a higher mean price compared to owner.
+Both seem to be symmetrical aside from outliers. breeder has a higher mean price compared to owner.
 
 **Location:**
 The data for dogs sold by breeders is centred at a higher price than those being sold by owners.
@@ -489,29 +584,30 @@ There are a number of outliers well above the majority of the prices for dogs so
 
 ### Microchipping Status
 
-Here we produce a boxplot for pets offered by owners and those offered by breeders against the response variable price (figure 15:
+Here we produce a boxplot for pets offered by owners and those offered by breeders against the response variable price (figure 18):
 
 
-```{r, warning = F, error = F, fig.cap = "Boxplots of dog prices on Gumtree sorted by whether dogs have been microchipped"}
+```{r, warning = F, error = F, fig.cap = "Boxplots of dog prices on Gumtree sorted by whether dogs have been microchipped."}
 ggplot(gumtree, aes(x = micro, y = price)) + geom_boxplot()
 ```
 
 
-We can now filter out the NA values (Figure 16).
+We can now filter out the NA values (Figure 19).
 
 
-```{r, warning = F, error = F, fig.cap = "Boxplots of dog prices on Gumtree sorted by whether dogs have been microchipped, without NA values"}
+```{r, warning = F, error = F, fig.cap = "Boxplots of dog prices on Gumtree sorted by whether dogs have been microchipped, without NA values."}
 ggplot(gumtree %>% filter(!is.na(gumtree$micro)), aes(x = micro, y = price)) + geom_boxplot()
 ```
 
 
-Again, we produce the same plot but against the natural logarithm of price, since the interquartile range spanned a small portion of the price axis when the outliers are considered (Figure 17).
+Again, we produce the same plot but against the natural logarithm of price, since the interquartile range spanned a small portion of the price axis when the outliers are considered (Figure 20).
 
 
-```{r, warning = F, error = F, fig.cap = "Boxplots of the natural logarithm of dog prices on Gumtree sorted by whether dogs have been microchipped, without NA values"}
+```{r, warning = F, error = F, fig.cap = "Boxplots of the natural logarithm of dog prices on Gumtree sorted by whether dogs have been microchipped, without NA values."}
 ggplot(gumtree %>% filter(!is.na(gumtree$micro)), aes(x = micro, y = log(price))) + geom_boxplot()
 ```
 
+\newpage
 
 #### Description
 
@@ -529,34 +625,36 @@ There is a large number of outliers for the dogs which have been microchiped. Th
 
 
 ### Vaccination Status
-Now a boxplot is produced showing prices of dogs sorted by their vaccination status (Figure 18):
+Now a boxplot is produced showing prices of dogs sorted by their vaccination status (Figure 21):
 
 
-```{r, warning = F, error = F, fig.cap = "Boxplots of the dog prices on Gumtree sorted by whether dogs have been vaccinated"}
+```{r, warning = F, error = F, fig.cap = "Boxplots of the dog prices on Gumtree sorted by whether dogs have been vaccinated."}
 ggplot(gumtree, aes(x = vacc, y = price)) + geom_boxplot()
 ```
 
+\newpage
 
-Without NA values (Figure 19):
+Without NA values (Figure 22):
 
 
-```{r, warning = F, error = F, fig.cap = "Boxplots of the dog prices on Gumtree sorted by whether dogs have been vaccinated, without NA values"}
+```{r, warning = F, error = F, fig.cap = "Boxplots of the dog prices on Gumtree sorted by whether dogs have been vaccinated, without NA values."}
 ggplot(gumtree %>% filter(!is.na(gumtree$vacc)), aes(x = vacc, y = price)) + geom_boxplot()
 ```
 
 
-Again, we produce the same plot but against the natural logarithm of price, since the interquartile range spanned a small portion of the price axis when the outliers are considered (Figure 20).
+Again, we produce the same plot but against the natural logarithm of price, since the interquartile range spanned a small portion of the price axis when the outliers are considered (Figure 23).
 
 
-```{r, warning = F, error = F, fig.cap = "Boxplots of the natural logarithm of dog prices on Gumtree sorted by whether dogs have been vaccinated, without NA values"}
+```{r, warning = F, error = F, fig.cap = "Boxplots of the natural logarithm of dog prices on Gumtree sorted by whether dogs have been vaccinated, without NA values."}
 ggplot(gumtree %>% filter(!is.na(gumtree$vacc)), aes(x = vacc, y = log(price))) + geom_boxplot()
 ```
 
+\newpage
 
 #### Description
 
 **Shape:**
-Both dogs which have and which have not been vaccinated appear to have symmetrical data, however, since those which have not, have such a narrow spread, (possibly due to a small sample size) it is difficult to be certain. Vaccinated dogs have a higher mean price.
+Both dogs which have, and which have not been vaccinated appear to have symmetrical data, however, since those which have not, have such a narrow spread, (possibly due to a small sample size) it is difficult to be certain. Vaccinated dogs have a higher mean price.
 
 **Location:**
 The centre of the data for dogs which have not been vaccinated is at a lower price than those which have.
@@ -569,33 +667,36 @@ The non-vaccinated dogs appear to have one outlier either side of the centre, an
 
 
 ### Desexing Status
-Here a boxplot is produced showing the prices of dogs sorted by their desexing status (Figure 21):
+Here a boxplot is produced showing the prices of dogs sorted by their desexing status (Figure 24):
 
 
-```{r, warning = F, error = F, fig.cap = "Boxplots of the dog prices on Gumtree sorted by whether dogs have been desexed"}
+```{r, warning = F, error = F, fig.cap = "Boxplots of the dog prices on Gumtree sorted by whether dogs have been desexed."}
 ggplot(gumtree, aes(x = desex, y = price)) + geom_boxplot()
 ```
 
-Without NA values (Figure 22):
+\newpage
+
+Without NA values (Figure 25):
 
 
-```{r, warning = F, error = F, fig.cap = "Boxplots of the dog prices on Gumtree sorted by whether dogs have been vaccinated, without NA values"}
+```{r, warning = F, error = F, fig.cap = "Boxplots of the dog prices on Gumtree sorted by whether dogs have been vaccinated, without NA values."}
 ggplot(gumtree %>% filter(!is.na(gumtree$desex)), aes(x = desex, y = price)) + geom_boxplot()
 ```
 
 
-Again, we produce the same plot but against the natural logarithm of price, since the interquartile range spanned a small portion of the price axis when the outliers are considered (Figure 23).
+Again, we produce the same plot but against the natural logarithm of price, since the interquartile range spanned a small portion of the price axis when the outliers are considered (Figure 26).
 
 
-```{r, warning = F, error = F, fig.cap = "Boxplots of the natural logarithm of dog prices on Gumtree sorted by whether dogs have been desexed, without NA values"}
+```{r, warning = F, error = F, fig.cap = "Boxplots of the natural logarithm of dog prices on Gumtree sorted by whether dogs have been desexed, without NA values."}
 ggplot(gumtree %>% filter(!is.na(gumtree$desex)), aes(x = desex, y = log(price))) + geom_boxplot()
 ```
 
+\newpage
 
 #### Description
 
 **Shape:**
-The prices of dogs which have been desexed appears to be symmetrically distributed, while the prices of those which are entire appears to be somewhat right-skewed. Mean price of dogs is slightly higher for dogs that have been entired.
+The prices of dogs which have been desexed appears to be symmetrically distributed, while the prices of those which are entire appears to be somewhat right-skewed. Mean price of dogs is slightly higher for dogs which are entire.
 
 **Location:**
 The data for the dogs which have not been desexed is centred a slightly higher price than those which have been desexed, but the difference is only approximately $100.
@@ -606,53 +707,13 @@ The range of prices for the entire dogs is significantly larger than that for th
 **Outliers:**
 There are a number of outliers in the prices of dogs which have been desexed, whereas there are only two outliers in the prices of dogs which have not been desexed.
 
-
-### State
-Here we produce a boxplot of dog prices sorted by the state in which they are being sold (FIgure 24):
-
-
-```{r, warning = F, error = F, fig.cap = "Boxplots of the dog prices on Gumtree sorted by state"}
-ggplot(gumtree, aes(x = state, y = price)) + geom_boxplot()
-```
-
-
-Without NA values (Figure 25):
-
-
-```{r, warning = F, error = F, fig.cap = "Boxplots of the dog prices on Gumtree sorted by state, without NA values"}
-ggplot(gumtree %>% filter(!is.na(gumtree$state)), aes(x = state, y = price)) + geom_boxplot()
-```
-
-
-Again, we produce the same plot but against the natural logarithm of price, since the interquartile range spanned a small portion of the price axis when the outliers are considered (Figure 26):
-
-
-```{r, warning = F, error = F, fig.cap = "Boxplots of the natural logarithm of dog prices on Gumtree sorted by state, without NA values"}
-ggplot(gumtree %>% filter(!is.na(gumtree$state)), aes(x = state, y = log(price))) + geom_boxplot()
-```
-
-
-#### Description
-
-**Shape:**
-The distribution of prices of dogs seem to be mostly symmetrical in all states, except the prices in Victoria may be slightly right-skewed.
-
-**Location:**
-The centre of the data for dogs prices is very similar amongst all states.
-
-**Spread:**
-Most states have a smilarly small spread of data, except Victoria which has a wider spread, and ACT and WA which both have narrower spreads.
-
-**Outliers:**
-All states appear to have a number of outliers, with the least extreme prices in Tasmania. Most outliers seem to be skewed towards a higher price.
-
   
 
 ### Relinquished Status
 Now, a boxplot is produced showing the prices of dogs sorted by their relinquished status (Figure 27):
 
 
-```{r, warning = F, error = F, fig.cap = "Boxplots of the dog prices on Gumtree sorted by whether dogs have been relinquished"}
+```{r, warning = F, error = F, fig.cap = "Boxplots of the dog prices on Gumtree sorted by whether dogs have been relinquished."}
 ggplot(gumtree, aes(x = relinquished, y = price)) + geom_boxplot()
 ```
 
@@ -660,10 +721,11 @@ ggplot(gumtree, aes(x = relinquished, y = price)) + geom_boxplot()
 Again, we produce the same plot but against the natural logarithm of price, since the interquartile range spanned a small portion of the price axis when the outliers are considered (Figure 28):
 
 
-```{r, warning = F, error = F, fig.cap = "Boxplots of the natural logarithm of dog prices on Gumtree sorted by relinquished"}
+```{r, warning = F, error = F, fig.cap = "Boxplots of the natural logarithm of dog prices on Gumtree sorted by relinquished."}
 ggplot(gumtree %>% filter(!is.na(gumtree$state)), aes(x = relinquished, y = log(price))) + geom_boxplot()
 ```
 
+\newpage
 
 #### Description
 
@@ -684,10 +746,11 @@ Both dogs which have been relinquished and those which have not have a large num
 As age is a numerical varaible, prices are plotted against age on the following boxplot (Figure 29):
 
 
-```{r, warning = F, error = F, fig.cap = "Scatterplot of the dog prices of Gumtree against the age of the dog"}
+```{r, warning = F, error = F, fig.cap = "Scatterplot of the dog prices of Gumtree against the age of the dog."}
 ggplot(gumtree, aes(x = age, y = price)) + geom_point()
 ```
 
+\newpage
 
 #### Description
 
@@ -704,7 +767,7 @@ There is a large spread of data, so the strength of the relationship is weak to 
 Since the data does not appear at all linear, we can produce the same plot but with the natural logarithm of price (Figure 30):
 
 
-```{r, warning = F, error = F, fig.cap = "Scatterplot of the natural logarithm of dog prices of Gumtree against the age of the dog"}
+```{r, warning = F, error = F, fig.cap = "Scatterplot of the natural logarithm of dog prices of Gumtree against the age of the dog."}
 ggplot(gumtree, aes(x = age, y = log(price))) + geom_point()
 ```
 
@@ -744,20 +807,19 @@ The p-value is less than the significance level of 0.1, hence the cross data sho
 Modelling against microchipping status:
 
 ```{r}
-micro.lm <- lm(price ~ micro, data = gumtreeN)
-glance(micro.lm)
+table(gumtreeN$micro)
 ```
 
-The p-value is greater than the significance level of 0.1, hence the microscipping status data need not be considered for the final model.
+Here we notice that there are no not microchipped dogs in the cleaned dataset, so the microchipping data should not be included in the final model
+
 
 Modelling against vaccination:
 
 ```{r}
-vacc.lm <- lm(price ~ vacc, data = gumtreeN)
-glance(vacc.lm)
+table(gumtreeN$vacc)
 ```
 
-The p-value is greater than the significance level of 0.1, hence the vaccination status data need not be considered for the final model.
+Here we notice that there are no unvaccinated dogs in the cleaned dataset, so the vaccination status data should not be included in the final model
 
 Modelling against desexing status:
 
@@ -856,19 +918,19 @@ Since the automatic selection method was used, heuristic decisions were made for
 Let's check our assumptions for this model in the following diagnostic plots (Figure 31):
 
 
-```{r, fig.cap = "Diagnostic Plots for Standard Model"}
+```{r, warning = F, message = F, error = F, fig.cap = "Diagnostic Plots for Standard Model."}
 tmp<-par(mfrow=c(2,2))
 plot(test_model)
 ```
 
 
-**Linearity:** Check residual vs fitted plot.  If assumption is true we expect the red line to be flat around 0. We see that there is a bit of curvature but it's not too bad. Hence linearity is reasonable. 
+**Linearity:** Checking the residual vs fitted plot.  If assumption is true we expect the red line to be flat around 0. We see that there is a bit of curvature but it's not too bad. Hence linearity is reasonable. 
 
-**Normality:** Check normal QQ plot. If assumption is true we expect the points between -2 and 2 to fall on the diagonal line. We see that most points fall on the diagonal although some points curve upward around 2. Normality is ok. 
+**Normality:** Checking the normal Quantile-Quantile plot. If the assumption is true we expect the points between -2 and 2 to fall on the diagonal line. We see that most points fall on the diagonal although some points curve upward around 2. Normality is okay. 
 
 **Equal variance:** Check scale location plot. Looking for even spread as we go left to right.Points seem to fan outward as you go from left to right. Equal variance is not reasonable. 
 
-**Independence:** Plots do not help. Price of dogs should theoretically be independent. 
+**Independence:** Plots do not help us to discern independence of the tests. Price of dogs should theoretically be independent. 
 
 Notice in the residual vs fitted plot, the points tend to be clustered to the left. This suggests that data is right skewed. Perhaps we can get a better model with a log transform of price. We apply the 3 algorithms we used previously.
 
@@ -876,7 +938,7 @@ Notice in the residual vs fitted plot, the points tend to be clustered to the le
 
 ### Logarithm of Price
 
-First, we create bivariate regression models of log(price) against each predictor variable, to decide whether they have enough of an effect on log(price) individually, and if not, they will not be considered for the final model. Again, for this initial selection process, we use a more relaxed significance level of 0.1, before during model selection, where the stricter significance level of 0.05 is used.
+Now, since the assumptions of the linear model were not satisfied well by the first model, we create bivariate regression models of log(price) against each predictor variable, to decide whether they have enough of an effect on log(price) individually, and if not, they will not be considered for the final model. Again, for this initial selection process, we use a more relaxed significance level of 0.1, before during model selection, where the stricter significance level of 0.05 is used.
 
 Modelling against age:
   
@@ -896,21 +958,11 @@ The p-value is less than the significance level of 0.1, hence the cross data sho
 
 Modelling against microchipping status:
   
-```{r}
-log_micro.lm <- lm(log(price) ~ micro, data = gumtreeN)
-glance(log_micro.lm)
-```
-
-The p-value is greater than the significance level of 0.1, hence the microshipping status data need not be considered for the final logarithm model.
+As was discovered for the first model, there are no dogs which have not been microchipped in the cleaned data, so it will not be considered for the logarithm of price model.
 
 Modelling against vaccination:
   
-```{r}
-log_vacc.lm <- lm(log(price) ~ vacc, data = gumtreeN)
-glance(log_vacc.lm)
-```
-
-The p-value is greater than the significance level of 0.1, hence the vaccination status data need not be considered for the final logarithm model.
+As was discovered for the first model, there are no dogs which have not been vaccinated in the cleaned data, so it will not be considered for the logarithm of price model.
 
 Modelling against desexing status:
   
@@ -1000,7 +1052,7 @@ Since the automatic selection method was used, heuristic decisions were made for
 Let's check our assumptions in the following diagnostic plots (Figure 32):
 
 
-```{r, fig.cap = "Diagnostic Plots for Logarithm of Price Model"}
+```{r, error = F, warning = F, message = F, fig.cap = "Diagnostic Plots for Logarithm of Price Model."}
 tmp<-par(mfrow=c(2,2))
 plot(log_model)
 
@@ -1008,25 +1060,25 @@ plot(log_model)
 
 **Linearity:** Check residual vs fitted plot.  If assumption is true we expect the red line to be flat around 0. We see that there is a bit of curvature but it's not too bad. Hence linearity is reasonable. 
 
-**Normality:** Check normal QQ plot. If assumption is true we expect the points between -2 and 2 to fall on the diagonal line. We see that most points fall on the diagonal. Normality is ok and much better than previous model. 
+**Normality:** Check normal QQ plot. If assumption is true we expect the points between -2 and 2 to fall on the diagonal line. We see that most points fall on the diagonal. Normality is okay and much better than previous model. 
 
-**Constant variance:* Check scale location plot. Looking for even spread as we go left to right.Some curvature is seen but is not too bad. Better than previous model. Equal variance is ok.
+**Constant variance:** Check scale location plot. Looking for even spread as we go left to right.Some curvature is seen but is not too bad. Better than previous model. Equal variance is okay.
 
 **Independence:** Plots do not help. Price of dogs should theoretically be independent. 
 
-Given that the 4 assumptions are ok and the plots for the log model look better, we will go with the log model. 
+Given that the 4 assumptions are okay and the plots for the log model look better, we choose to use the log model. 
 
 \newpage
 
 # Prediction
-**This is not final as model selection is unfinished, but the code seems to work**
+
+We were asked to predict the price of a South Australian, cross-breed dog that is 1 year old. The dog is vaccinated, desexed and unfortunately has to be re-homed because the owner is moving interstate. We will use our log model which only uses the predictors, age, cross, desex and relinquished. 
+
 ```{r}
 predict(log_bM, data.frame(state = "SA", cross = "yes", age = 1, vacc = "vaccinated",
                        relinquished = "yes", desex = "Desexed",
                        micro = "microchipped"), interval = "predict")
 ```
-
-We were asked to predict the price of a South Australian, cross-breed dog that is 1 year old. The dog is vaccinated, desexed and unfortunately has to be re-homed because the owner is moving interstate. we will use our log model which only uses the predictors, age, cross, desex and relinquished. 
 
 Based on our model the log price of the dog is 4.571763. 
 
@@ -1034,9 +1086,31 @@ Based on our model the log price of the dog is 4.571763.
 exp(4.571763)
 ```
 
-Hence the predicted price for this dog is $96.71. That is to say our model predicts that the median price for a dog of the traits above is $96.71. 
+Hence the predicted price for this dog is $96.71. That is to say our model predicts that the median price for a dog with the traits described above is $96.71. 
 
-Reference:
+
+# Conclusion
+
+After cleaning the data, the bivariate analysis was performed. For each boxplot analysed, it was confirmed that the shape, location, spread and outliers all passed the ‘stupidity test’. Then, bivariate regression models were created of price against each predictor variable. Using these models, it was decided that the variables that had the biggest effect on price were:
+
+
+- the age of the dog – a negative effect on the price;
+- the age and desexed status of the dog  – a positive effect if the dog has not been desexed;
+- the crossbreed status of the dog – an extremely negative effect on the price if the dog is a crossbreed;
+- the crossbreed status and relinquished status of the dog – a positive effect if both are true;
+- the desexed status of the dog – a negative effect if false (entire);
+- the relinquished status of the dog – a very negative effect if true.
+
+
+The four assumptions were checked for this proposed model and the assumption of equal variance was not reasonable. An attempt to improve the model was then performed; ‘log(price)’ was used instead of ‘price’. After checking the four assumptions for this modified model, all of the assumptions were reasonable. This was the final model chosen for prediction. The price of a South Australian, vaccinated, desexed, re-homed, cross-breed dog that is 1 year old was predicted using the model. The price was predicted to be: $96.71.
+
+
+
+&nbsp;
+
+&nbsp;
+
+**Reference:**
 
 All code for this paper is openly available on github. The relevant code can be found in the .rmd document.
 
